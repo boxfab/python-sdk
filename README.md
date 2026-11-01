@@ -149,3 +149,5 @@ rules there, not the generated files. See [UPSTREAM.md](UPSTREAM.md).
 ## License
 
 MIT. See [LICENSE](LICENSE) and, for the upstream E2B SDK, [LICENSE-E2B](LICENSE-E2B).
+
+Boxfab is a product of ContextFab, Inc.

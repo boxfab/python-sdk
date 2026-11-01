@@ -77,7 +77,7 @@ rules, git helpers, PTY, filesystem watch.
 
 The SDK subtree is licensed MIT (`LICENSE-E2B`, "Copyright (c) 2025 FOUNDRYLABS, INC."), which is
 also what the `e2b` distribution declares on PyPI. The E2B monorepo root is Apache-2.0; neither
-level ships a NOTICE file. Boxfab's changes are also MIT (`LICENSE`). Both license files are
+level ships a NOTICE file. Boxfab's changes are also MIT (`LICENSE`), Copyright (c) 2026 ContextFab, Inc. Both license files are
 included in the wheel and sdist.
 
 ## Updating
