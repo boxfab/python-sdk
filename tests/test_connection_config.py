@@ -1,0 +1,335 @@
+import pytest
+
+from boxfab import ConnectionConfig
+from boxfab.connection_config import DEFAULT_RETRIES
+from boxfab.exceptions import InvalidArgumentException
+
+
+def test_api_url_defaults_correctly(monkeypatch):
+    monkeypatch.setenv("BOXFAB_DOMAIN", "")
+    monkeypatch.delenv("BOXFAB_API_URL", raising=False)
+
+    config = ConnectionConfig()
+    assert config.api_url == "https://api.sandd.contextfab.io"
+
+
+def test_api_url_in_args():
+    config = ConnectionConfig(api_url="http://localhost:8080")
+    assert config.api_url == "http://localhost:8080"
+
+
+def test_api_url_in_env_var(monkeypatch):
+    monkeypatch.setenv("BOXFAB_API_URL", "http://localhost:8080")
+
+    config = ConnectionConfig()
+    assert config.api_url == "http://localhost:8080"
+
+
+def test_api_url_has_correct_priority(monkeypatch):
+    monkeypatch.setenv("BOXFAB_API_URL", "http://localhost:1111")
+
+    config = ConnectionConfig(api_url="http://localhost:8080")
+    assert config.api_url == "http://localhost:8080"
+
+
+def test_sandbox_url_uses_stable_host_for_supported_domain():
+    config = ConnectionConfig(domain="e2b.app")
+
+    assert config.get_sandbox_url("sandbox-id", "e2b.app") == "https://sandbox.e2b.app"
+
+
+@pytest.mark.parametrize(
+    "domain",
+    [
+        "e2b.dev",
+        "e2b.pro",
+        "e2b-staging.dev",
+        "e2b-tango.dev",
+        "e2b-juliett.dev",
+        "foxtrot-2.e2b.dev",
+    ],
+)
+def test_sandbox_url_uses_stable_host_for_supported_non_prod_domain(domain):
+    config = ConnectionConfig(domain=domain)
+
+    assert config.get_sandbox_url("sandbox-id", domain) == f"https://sandbox.{domain}"
+
+
+def test_sandbox_url_uses_explicit_url_first():
+    config = ConnectionConfig(sandbox_url="https://sandbox.example.com")
+
+    assert (
+        config.get_sandbox_url("sandbox-id", "e2b.app") == "https://sandbox.example.com"
+    )
+
+
+def test_sandbox_url_falls_back_to_per_sandbox_host_for_custom_domain():
+    config = ConnectionConfig(domain="custom.example")
+
+    assert (
+        config.get_sandbox_url("sandbox-id", "custom.example")
+        == "https://49983-sandbox-id.custom.example"
+    )
+
+
+def test_sandbox_url_falls_back_to_per_sandbox_host_for_unsupported_subdomain():
+    config = ConnectionConfig(domain="e2b.dev")
+
+    assert (
+        config.get_sandbox_url("sandbox-id", "sandbox.e2b.dev")
+        == "https://49983-sandbox-id.sandbox.e2b.dev"
+    )
+
+
+def test_sandbox_url_debug_uses_localhost():
+    config = ConnectionConfig(debug=True)
+
+    assert config.get_sandbox_url("sandbox-id", "e2b.app") == "http://localhost:49983"
+
+
+def test_get_host_keeps_per_sandbox_host_for_supported_domain():
+    config = ConnectionConfig(domain="e2b.app")
+
+    assert config.get_host("sandbox-id", "e2b.app", 8888) == "8888-sandbox-id.e2b.app"
+
+
+def test_sandbox_direct_url_keeps_per_sandbox_host_for_supported_domain():
+    config = ConnectionConfig(domain="e2b.app")
+
+    assert (
+        config.get_sandbox_direct_url("sandbox-id", "e2b.app")
+        == "https://49983-sandbox-id.e2b.app"
+    )
+
+
+def test_sandbox_url_with_port_uses_stable_host_for_supported_domain():
+    config = ConnectionConfig(domain="e2b.app")
+
+    assert (
+        config.get_sandbox_url("sandbox-id", "e2b.app", port=49999)
+        == "https://sandbox.e2b.app"
+    )
+
+
+def test_sandbox_url_with_port_uses_per_sandbox_host_for_unsupported_domain():
+    config = ConnectionConfig(domain="example.dev")
+
+    assert (
+        config.get_sandbox_url("sandbox-id", "example.dev", port=49999)
+        == "https://49999-sandbox-id.example.dev"
+    )
+
+
+def test_sandbox_url_with_port_debug_uses_localhost():
+    config = ConnectionConfig(debug=True)
+
+    assert (
+        config.get_sandbox_url("sandbox-id", "e2b.app", port=49999)
+        == "http://localhost:49999"
+    )
+
+
+def test_sandbox_direct_url_with_port_uses_per_sandbox_host():
+    config = ConnectionConfig(domain="e2b.app")
+
+    assert (
+        config.get_sandbox_direct_url("sandbox-id", "e2b.app", port=49999)
+        == "https://49999-sandbox-id.e2b.app"
+    )
+
+
+def test_sandbox_url_without_port_uses_envd_port():
+    config = ConnectionConfig(domain="example.dev")
+
+    assert (
+        config.get_sandbox_url("sandbox-id", "example.dev")
+        == "https://49983-sandbox-id.example.dev"
+    )
+
+
+def test_sandbox_direct_url_uses_explicit_url_first():
+    config = ConnectionConfig(sandbox_url="https://sandbox.example.com")
+
+    assert (
+        config.get_sandbox_direct_url("sandbox-id", "e2b.app")
+        == "https://sandbox.example.com"
+    )
+
+
+def test_debug_false_overrides_env_var(monkeypatch):
+    monkeypatch.setenv("BOXFAB_DEBUG", "true")
+
+    config = ConnectionConfig(debug=False)
+    assert config.debug is False
+
+
+def test_debug_defaults_to_env_var(monkeypatch):
+    monkeypatch.setenv("BOXFAB_DEBUG", "true")
+
+    config = ConnectionConfig()
+    assert config.debug is True
+
+
+def test_set_integration_appends_to_user_agent():
+    ConnectionConfig.set_integration("testing/version")
+    try:
+        config = ConnectionConfig()
+
+        assert config.headers["User-Agent"].startswith("boxfab-python-sdk/")
+        assert config.headers["User-Agent"].endswith(" testing/version")
+    finally:
+        ConnectionConfig.set_integration(None)
+
+    config = ConnectionConfig()
+    assert "testing" not in config.headers["User-Agent"]
+
+
+def test_custom_user_agent_is_preserved_without_integration():
+    config = ConnectionConfig(api_headers={"User-Agent": "custom/1.0"})
+
+    assert config.headers["User-Agent"] == "custom/1.0"
+
+
+def test_custom_user_agent_wins_over_integration(monkeypatch):
+    monkeypatch.setattr(ConnectionConfig, "_integration", "testing/version")
+
+    config = ConnectionConfig(api_headers={"User-Agent": "custom/1.0"})
+
+    assert config.headers["User-Agent"] == "custom/1.0"
+
+
+def test_integration_survives_api_param_rebuilds(monkeypatch):
+    monkeypatch.setattr(ConnectionConfig, "_integration", "testing/version")
+
+    config = ConnectionConfig()
+    rebuilt_config = ConnectionConfig(**config.get_api_params())
+
+    assert rebuilt_config.headers["User-Agent"].endswith(" testing/version")
+    assert rebuilt_config.get_api_params(api_headers={"X-Test": "1"})["headers"][
+        "User-Agent"
+    ].endswith(" testing/version")
+
+
+def test_cleared_integration_does_not_leak_into_api_param_rebuilds():
+    ConnectionConfig.set_integration("testing/version")
+    try:
+        config = ConnectionConfig()
+    finally:
+        ConnectionConfig.set_integration(None)
+
+    params = config.get_api_params()
+    assert not params["headers"]["User-Agent"].endswith(" testing/version")
+
+    rebuilt_config = ConnectionConfig(**params)
+    assert not rebuilt_config.headers["User-Agent"].endswith(" testing/version")
+
+
+def test_custom_user_agent_survives_api_param_rebuilds(monkeypatch):
+    monkeypatch.setattr(ConnectionConfig, "_integration", "testing/version")
+
+    config = ConnectionConfig(api_headers={"User-Agent": "custom/1.0"})
+    rebuilt_config = ConnectionConfig(**config.get_api_params())
+
+    assert rebuilt_config.headers["User-Agent"] == "custom/1.0"
+
+    monkeypatch.setattr(ConnectionConfig, "_integration", None)
+
+    config = ConnectionConfig(api_headers={"User-Agent": "custom/1.0"})
+    rebuilt_config = ConnectionConfig(**config.get_api_params())
+    assert rebuilt_config.headers["User-Agent"] == "custom/1.0"
+
+
+def test_per_call_user_agent_override_wins_in_api_params(monkeypatch):
+    monkeypatch.setattr(ConnectionConfig, "_integration", "testing/version")
+
+    config = ConnectionConfig()
+    params = config.get_api_params(api_headers={"User-Agent": "custom/1.0"})
+    assert params["headers"]["User-Agent"] == "custom/1.0"
+
+
+def test_per_call_api_headers_user_agent_wins_over_headers():
+    config = ConnectionConfig()
+    params = config.get_api_params(
+        headers={"User-Agent": "from-headers/1.0"},
+        api_headers={"User-Agent": "from-api-headers/1.0"},
+    )
+    assert params["headers"]["User-Agent"] == "from-api-headers/1.0"
+
+
+def test_request_timeout_zero_means_no_timeout():
+    config = ConnectionConfig(request_timeout=0)
+    assert config.request_timeout is None
+    assert config.get_request_timeout() is None
+    # A per-call value of 0 also disables the timeout.
+    assert config.get_request_timeout(0) is None
+
+
+def test_get_api_params_includes_sandbox_url():
+    config = ConnectionConfig(sandbox_url="https://sandbox.example.com")
+
+    params = config.get_api_params()
+    assert params["sandbox_url"] == "https://sandbox.example.com"
+
+    # Per-call override takes priority.
+    overridden = config.get_api_params(sandbox_url="https://sandbox.override.com")
+    assert overridden["sandbox_url"] == "https://sandbox.override.com"
+
+
+def test_retries_default_to_three_and_propagate():
+    config = ConnectionConfig(retries=5)
+
+    assert ConnectionConfig().retries == DEFAULT_RETRIES
+    assert config.retries == 5
+    assert config.get_api_params()["retries"] == 5
+    assert config.get_api_params(retries=0)["retries"] == 0
+
+
+@pytest.mark.parametrize("retries", [-1, 1.5, True])
+def test_retries_reject_invalid_values(retries):
+    with pytest.raises(InvalidArgumentException):
+        ConnectionConfig(retries=retries)
+
+
+def test_http_version_defaults_to_http2_and_propagates(monkeypatch):
+    monkeypatch.delenv("BOXFAB_HTTP_VERSION", raising=False)
+
+    assert ConnectionConfig().http_version == "2"
+    assert ConnectionConfig().get_api_params()["http_version"] == "2"
+
+    config = ConnectionConfig(http_version="1.1")
+    assert config.http_version == "1.1"
+    # Reconstructed configs (a sandbox's sub-clients) keep the setting, and a
+    # per-call value overrides it.
+    assert config.get_api_params()["http_version"] == "1.1"
+    assert ConnectionConfig(**config.get_api_params()).http_version == "1.1"
+    assert config.get_api_params(http_version="2")["http_version"] == "2"
+
+
+@pytest.mark.parametrize(
+    ("value", "expected"),
+    [("1.1", "1.1"), ("2", "2"), ("", "2")],
+)
+def test_http_version_reads_env_var(monkeypatch, value, expected):
+    monkeypatch.setenv("BOXFAB_HTTP_VERSION", value)
+
+    assert ConnectionConfig().http_version == expected
+    # The explicit argument wins over the environment.
+    other = "2" if expected == "1.1" else "1.1"
+    assert ConnectionConfig(http_version=other).http_version == other
+
+
+def test_http_version_rejects_unknown_env_value(monkeypatch):
+    monkeypatch.setenv("BOXFAB_HTTP_VERSION", "http3")
+
+    with pytest.raises(InvalidArgumentException, match="BOXFAB_HTTP_VERSION"):
+        ConnectionConfig()
+    # An explicit option never consults the environment.
+    assert ConnectionConfig(http_version="1.1").http_version == "1.1"
+
+
+@pytest.mark.parametrize("value", ["http1", "http2", "1", "2.0", "HTTP/1.1", ""])
+def test_http_version_rejects_unknown_explicit_value(monkeypatch, value):
+    monkeypatch.delenv("BOXFAB_HTTP_VERSION", raising=False)
+
+    with pytest.raises(InvalidArgumentException, match="http_version"):
+        ConnectionConfig(http_version=value)

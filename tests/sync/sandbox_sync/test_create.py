@@ -1,0 +1,199 @@
+from time import monotonic, sleep
+from typing import Any, cast
+from uuid import uuid4
+
+import httpx
+import pytest
+
+from boxfab import Sandbox, SandboxException, SandboxState
+from boxfab.sandbox.sandbox_api import SandboxQuery
+
+
+def wait_for_state(sandbox: Sandbox, state: SandboxState, timeout: float = 30) -> None:
+    deadline = monotonic() + timeout
+    current_state: SandboxState | None = None
+
+    while monotonic() < deadline:
+        current_state = sandbox.get_info().state
+        if current_state == state:
+            return
+        sleep(0.2)
+
+    pytest.fail(f"sandbox did not reach {state}; last state was {current_state}")
+
+
+def wait_for_http_status(url: str, status: int, timeout: float = 30) -> None:
+    deadline = monotonic() + timeout
+    current_status: int | None = None
+
+    with httpx.Client(timeout=5.0) as client:
+        while monotonic() < deadline:
+            try:
+                current_status = client.get(url).status_code
+            except httpx.HTTPError:
+                pass
+            if current_status == status:
+                return
+            sleep(0.5)
+
+    pytest.fail(f"endpoint did not return {status}; last status was {current_status}")
+
+
+@pytest.mark.skip_debug()
+def test_start(sandbox_factory):
+    sbx = sandbox_factory(timeout=5)
+
+    assert sbx.is_running()
+    assert sbx._envd_version is not None
+
+
+@pytest.mark.skip_debug()
+def test_metadata(sandbox_factory):
+    sbx = sandbox_factory(timeout=5, metadata={"test-key": "test-value"})
+
+    paginator = Sandbox.list(query=SandboxQuery(metadata={"test-key": "test-value"}))
+    sandboxes = paginator.next_items()
+
+    for sbx_info in sandboxes:
+        if sbx.sandbox_id == sbx_info.sandbox_id:
+            assert sbx_info.metadata is not None
+            assert sbx_info.metadata["test-key"] == "test-value"
+            break
+    else:
+        assert False, "Sandbox not found"
+
+
+@pytest.mark.skip_debug()
+def test_mcp_gateway_start_failure_kills_created_sandbox(template):
+    metadata = {"mcp_gateway_cleanup_test_id": str(uuid4())}
+    query = SandboxQuery(state=[SandboxState.RUNNING], metadata=metadata)
+    remaining_sandboxes = []
+
+    try:
+        # The base template has no mcp-gateway binary, so gateway startup
+        # reliably fails after the sandbox has been allocated.
+        with pytest.raises(SandboxException, match="Failed to start MCP gateway"):
+            Sandbox.create(
+                template,
+                timeout=60,
+                metadata=metadata,
+                mcp=cast(Any, {"invalid_server": {}}),
+            )
+
+        remaining_sandboxes = Sandbox.list(query=query).next_items()
+        assert remaining_sandboxes == []
+    finally:
+        try:
+            remaining_sandboxes = Sandbox.list(query=query).next_items()
+        except Exception:
+            pass
+        for sandbox in remaining_sandboxes:
+            Sandbox.kill(sandbox.sandbox_id)
+
+
+@pytest.mark.skip_debug()
+def test_invalid_on_timeout_type_does_not_crash(sandbox_factory):
+    # An untyped/invalid on_timeout (e.g. None) must not crash create; it falls
+    # back to kill semantics like a missing on_timeout (the sandbox just starts).
+    sbx = sandbox_factory(timeout=10, lifecycle=cast(Any, {"on_timeout": None}))
+    assert sbx.is_running()
+
+
+@pytest.mark.skip_debug()
+def test_mode_none_defaults_to_full_memory(sandbox_factory):
+    # An explicit None mode must default to full memory (not filesystem-only):
+    # the timeout auto-pause then resumes the SAME sandbox in place (memory restore),
+    # so the boot id is unchanged. A changed boot id would mean None was wrongly
+    # treated as filesystem-only (cold boot).
+    sbx = sandbox_factory(
+        timeout=60,
+        lifecycle={"on_timeout": {"action": "pause", "mode": None}},
+    )
+    boot_before = sbx.files.read("/proc/sys/kernel/random/boot_id").strip()
+
+    sbx.set_timeout(0)  # force the timeout auto-pause now
+    for _ in range(150):
+        if not sbx.is_running():
+            break
+        sleep(0.2)
+    assert not sbx.is_running()
+
+    resumed = sbx.connect()
+    assert resumed.sandbox_id == sbx.sandbox_id  # same sandbox
+    boot_after = resumed.files.read("/proc/sys/kernel/random/boot_id").strip()
+    assert boot_after == boot_before  # memory restore in place, not a cold boot
+
+
+@pytest.mark.skip_debug()
+@pytest.mark.timeout(270)
+def test_auto_pause_filesystem_only_reboots(sandbox_factory):
+    # mode="filesystem" makes the timeout auto-pause filesystem-only, so resuming
+    # cold-boots the sandbox from disk.
+    sandbox = sandbox_factory(
+        timeout=3,
+        lifecycle={"on_timeout": {"action": "pause", "mode": "filesystem"}},
+    )
+
+    marker = "auto-pause-fs-only"
+    sandbox.files.write("/home/user/auto-pause-marker.txt", marker)
+    boot_before = sandbox.files.read("/proc/sys/kernel/random/boot_id").strip()
+
+    wait_for_state(sandbox, SandboxState.PAUSED)
+
+    # A filesystem-only snapshot cannot auto-resume on traffic; connect resumes
+    # it by cold-booting.
+    try:
+        resumed = sandbox.connect(request_timeout=120)
+    except SandboxException as error:
+        # Placement can transiently time out while the cold boot is scheduled.
+        # Retry only the backend response that explicitly asks the caller to do so.
+        if "Failed to place sandbox: placement timed out" not in str(error):
+            raise
+        resumed = sandbox.connect(request_timeout=120)
+
+    persisted = resumed.files.read("/home/user/auto-pause-marker.txt").strip()
+    assert persisted == marker
+
+    boot_after = resumed.files.read("/proc/sys/kernel/random/boot_id").strip()
+    assert boot_after != boot_before
+
+
+@pytest.mark.skip_debug()
+@pytest.mark.timeout(90)
+def test_auto_pause_without_auto_resume_requires_connect(sandbox_factory):
+    sandbox = sandbox_factory(
+        timeout=3,
+        lifecycle={"on_timeout": "pause", "auto_resume": False},
+    )
+
+    wait_for_state(sandbox, SandboxState.PAUSED)
+    assert not sandbox.is_running()
+
+    sandbox.connect()
+
+    wait_for_state(sandbox, SandboxState.RUNNING)
+    assert sandbox.is_running()
+
+
+@pytest.mark.skip_debug()
+@pytest.mark.timeout(90)
+def test_auto_resume_wakes_on_http_request(sandbox_factory):
+    sandbox = sandbox_factory(
+        timeout=3,
+        lifecycle={"on_timeout": "pause", "auto_resume": True},
+    )
+
+    cmd = sandbox.commands.run("python3 -m http.server 8000", background=True)
+    try:
+        wait_for_state(sandbox, SandboxState.PAUSED)
+
+        url = f"https://{sandbox.get_host(8000)}"
+        wait_for_http_status(url, 200)
+
+        wait_for_state(sandbox, SandboxState.RUNNING)
+        assert sandbox.is_running()
+    finally:
+        try:
+            cmd.kill()
+        except Exception:
+            pass

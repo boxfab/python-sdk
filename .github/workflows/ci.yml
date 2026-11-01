@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        python: ["3.11", "3.12", "3.13"]
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: ${{ matrix.python }}
+      - run: uv sync --locked
+      - name: Lint
+        run: |
+          uv run ruff check boxfab tests_boxfab integration scripts
+          uv run ruff format --check tests_boxfab integration scripts examples
+      - name: Unit tests (offline; no credentials in this workflow)
+        run: uv run pytest tests/test_*.py tests_boxfab -n auto -p no:cacheprovider
+
+  generated-code-is-in-sync:
+    # boxfab/ and tests/ must be exactly what scripts/sync_upstream.py produces from the pin.
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+      - run: python scripts/sync_upstream.py
+      - run: git status --porcelain && git diff --exit-code
+
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv build
+      - run: uvx twine check --strict dist/*
+      - name: Distribution contents
+        run: |
+          python - <<'EOF'
+          import glob, re, zipfile
+          names = zipfile.ZipFile(glob.glob("dist/*.whl")[0]).namelist()
+          bad = [n for n in names if not re.match(r"boxfab/|boxfab-[^/]+\.dist-info/", n)]
+          assert not bad, f"unexpected files in wheel: {bad}"
+          for lic in ("LICENSE", "LICENSE-E2B"):
+              assert any(n.endswith(f".dist-info/licenses/{lic}") for n in names), lic
+          print(len(names), "files OK")
+          EOF
+      - name: Install the wheel in a clean environment
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl
+          cd /tmp && /tmp/clean/bin/python -c "import boxfab, importlib.metadata as m; from boxfab import Sandbox, AsyncSandbox; print(m.version('boxfab'), boxfab.__file__)"
+      - uses: actions/upload-artifact@v4
+        with:
+          name: dist
+          path: dist/

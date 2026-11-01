@@ -1,0 +1,44 @@
+name: Live tests
+
+# Runs the integration suite against the real deployment. Manual only, never on pull requests,
+# so untrusted code never sees the key. BOXFAB_API_KEY is a secret of the protected `live`
+# environment and must belong to a test team, not to a team that owns shared templates.
+
+on:
+  workflow_dispatch:
+    inputs:
+      domain:
+        description: "BOXFAB_DOMAIN (empty = SDK default)"
+        required: false
+        default: ""
+
+permissions:
+  contents: read
+
+concurrency:
+  group: live-tests
+  cancel-in-progress: false
+
+jobs:
+  live:
+    runs-on: ubuntu-latest
+    environment: live
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+        with:
+          python-version: "3.12"
+      - run: uv build
+      - name: Live suite against the built wheel
+        env:
+          SDK: boxfab
+          BOXFAB_API_KEY: ${{ secrets.BOXFAB_API_KEY }}
+          BOXFAB_DOMAIN: ${{ inputs.domain }}
+          LIVE_MAX_CONCURRENT: "5"
+        run: |
+          [ -n "$BOXFAB_DOMAIN" ] || unset BOXFAB_DOMAIN
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install dist/*.whl pytest pytest-asyncio pytest-timeout httpx
+          cp integration/test_live.py /tmp/ && cd /tmp
+          /tmp/clean/bin/pytest -q -p no:cacheprovider -o asyncio_mode=auto test_live.py
