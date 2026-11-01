@@ -145,6 +145,7 @@ uv build
 
 `boxfab/` and `tests/` are generated from upstream by `scripts/sync_upstream.py`; change the
 rules there, not the generated files. See [UPSTREAM.md](UPSTREAM.md).
+Releases: see [RELEASING.md](RELEASING.md).
 
 ## License
 

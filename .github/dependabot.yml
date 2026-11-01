@@ -1,0 +1,13 @@
+# Proposes updates for the SHA-pinned GitHub Actions. Python dependencies follow upstream E2B
+# through scripts/sync_upstream.py and are not managed here.
+version: 2
+updates:
+  - package-ecosystem: github-actions
+    directory: /
+    schedule:
+      interval: weekly
+    cooldown:
+      default-days: 14
+    groups:
+      actions:
+        patterns: ["*"]

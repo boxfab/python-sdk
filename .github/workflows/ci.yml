@@ -1,24 +1,40 @@
 name: CI
 
+# Runs on pull requests and pushes to main, and is called by publish.yml on the exact release
+# commit. Its `build` job produces the only distributions that publish.yml ever uploads.
+# The job names below are the required status checks of the `Protect main` ruleset; renaming a
+# job means updating the ruleset.
+
 on:
   pull_request:
   push:
     branches: [main]
+  workflow_call:
+    secrets:
+      DIST_EXTRA_DENY:
+        required: false
 
 permissions:
   contents: read
 
+env:
+  UV_VERSION: "0.11.32"
+
 jobs:
   test:
     runs-on: ubuntu-latest
+    timeout-minutes: 15
     strategy:
       fail-fast: false
       matrix:
         python: ["3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
           python-version: ${{ matrix.python }}
       - run: uv sync --locked
       - name: Lint
@@ -27,13 +43,23 @@ jobs:
           uv run ruff format --check tests_boxfab integration scripts examples
       - name: Unit tests (offline; no credentials in this workflow)
         run: uv run pytest tests/test_*.py tests_boxfab -n auto -p no:cacheprovider
+      - name: Release tag check rejects malformed tags
+        run: |
+          v=$(python -c "import tomllib;print(tomllib.load(open('pyproject.toml','rb'))['project']['version'])")
+          python scripts/check_release_tag.py "v$v"
+          for bad in "$v" "v$v-x" "V$v" "v0.0.0"; do
+            if python scripts/check_release_tag.py "$bad" 2>/dev/null; then echo "accepted bad tag $bad"; exit 1; fi
+          done
 
   generated-code-is-in-sync:
     # boxfab/ and tests/ must be exactly what scripts/sync_upstream.py produces from the pin.
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-python@v5
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/setup-python@5fda3b95a4ea91299a34e894583c3862153e4b97 # v7.0.0
         with:
           python-version: "3.12"
       - run: python scripts/sync_upstream.py
@@ -41,30 +67,47 @@ jobs:
 
   build:
     runs-on: ubuntu-latest
+    timeout-minutes: 10
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
         with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@1c37ad07a6a961277cf70c0d37d6f313000f5884 # v10.3.0
+        with:
+          version: ${{ env.UV_VERSION }}
           python-version: "3.12"
       - run: uv build
       - run: uvx twine check --strict dist/*
-      - name: Distribution contents
-        run: |
-          python - <<'EOF'
-          import glob, re, zipfile
-          names = zipfile.ZipFile(glob.glob("dist/*.whl")[0]).namelist()
-          bad = [n for n in names if not re.match(r"boxfab/|boxfab-[^/]+\.dist-info/", n)]
-          assert not bad, f"unexpected files in wheel: {bad}"
-          for lic in ("LICENSE", "LICENSE-E2B"):
-              assert any(n.endswith(f".dist-info/licenses/{lic}") for n in names), lic
-          print(len(names), "files OK")
-          EOF
+      - name: Distribution contents, metadata, licenses, secrets
+        env:
+          DIST_EXTRA_DENY: ${{ secrets.DIST_EXTRA_DENY }}
+        run: python scripts/check_dist.py dist
       - name: Install the wheel in a clean environment
         run: |
           python -m venv /tmp/clean
           /tmp/clean/bin/pip install dist/*.whl
-          cd /tmp && /tmp/clean/bin/python -c "import boxfab, importlib.metadata as m; from boxfab import Sandbox, AsyncSandbox; print(m.version('boxfab'), boxfab.__file__)"
-      - uses: actions/upload-artifact@v4
+          cd /tmp && /tmp/clean/bin/python -c "import boxfab, importlib.metadata as m; from boxfab import Sandbox, AsyncSandbox, BoxFab; assert boxfab.ConnectionConfig().domain == 'sandd.contextfab.io'; print(m.version('boxfab'), boxfab.__file__)"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist
           path: dist/
+          if-no-files-found: error
+          retention-days: 90
+
+  artifact-roundtrip:
+    # Downloads the build artifact with the same action publish.yml uses, and re-checks it, so
+    # the upload -> download path of the release is exercised on every change.
+    needs: build
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: actions/download-artifact@9000827ccba6bdab643e8b6fd33ac0654aef8333 # v8.0.2
+        with:
+          name: dist
+          path: dist/
+      - env:
+          DIST_EXTRA_DENY: ${{ secrets.DIST_EXTRA_DENY }}
+        run: python scripts/check_dist.py dist

@@ -9,3 +9,5 @@ Upstream E2B changes are in `CHANGELOG-E2B.md`.
 - Configuration only through `BOXFAB_*` environment variables (`BOXFAB_API_KEY`,
   `BOXFAB_DOMAIN`, ...); `E2B_*` variables are not read.
 - Default domain `sandd.contextfab.io` (BoxFab's current deployment).
+- Release pipeline: Trusted Publishing from GitHub Releases, CI on the exact release commit,
+  distribution checks (`scripts/check_dist.py`); see `RELEASING.md`.
