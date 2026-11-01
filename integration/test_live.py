@@ -1,6 +1,6 @@
 """Live integration tests against a running deployment.
 
-The same file runs against vanilla E2B and against Boxfab, so behaviour can be compared:
+The same file runs against vanilla E2B and against BoxFab, so behaviour can be compared:
 
     SDK=e2b    E2B_API_KEY=...    E2B_DOMAIN=...    pytest integration
     SDK=boxfab BOXFAB_API_KEY=... BOXFAB_DOMAIN=... pytest integration

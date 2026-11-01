@@ -167,7 +167,7 @@ from .template_sync.main import Template
 
 from .volume.volume_sync import Volume
 from .volume.volume_async import AsyncVolume
-from .client import Boxfab, BoxfabClientParams, E2B, E2BClientParams
+from .client import BoxFab, BoxFabClientParams, E2B, E2BClientParams
 from .volume.types import (
     VolumeInfo,
     VolumeAndToken,
@@ -177,8 +177,8 @@ from .volume.types import (
 
 __all__ = [
     # Client
-    "Boxfab",
-    "BoxfabClientParams",
+    "BoxFab",
+    "BoxFabClientParams",
     "E2B",
     "E2BClientParams",
     # API

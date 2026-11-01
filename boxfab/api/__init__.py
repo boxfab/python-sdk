@@ -242,7 +242,7 @@ class ApiClient(AuthenticatedClient):
 
         if config.api_key is None:
             raise AuthenticationException(
-                "API key is required, get one from your Boxfab administrator (keys are shown at https://dashboard.sandd.contextfab.io). "
+                "API key is required, get one from your BoxFab administrator (keys are shown at https://dashboard.sandd.contextfab.io). "
                 "You can either set the environment variable `BOXFAB_API_KEY` "
                 'or you can pass it directly to the method like api_key="e2b_..."',
             )

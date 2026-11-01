@@ -1,4 +1,4 @@
-"""Boxfab-specific guarantees on top of upstream's tests (which live in tests/ and are generated)."""
+"""BoxFab-specific guarantees on top of upstream's tests (which live in tests/ and are generated)."""
 
 import importlib.metadata
 import pathlib
@@ -84,8 +84,8 @@ def test_missing_key_message_is_boxfab():
 
 
 def test_client_names():
-    assert boxfab.Boxfab is boxfab.E2B
-    c = boxfab.Boxfab(api_key="e2b_" + "3" * 40, domain="example.test")
+    assert boxfab.BoxFab is boxfab.E2B
+    c = boxfab.BoxFab(api_key="e2b_" + "3" * 40, domain="example.test")
     assert c.Sandbox._bound_api_params["domain"] == "example.test"
 
 

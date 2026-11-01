@@ -1,7 +1,7 @@
 [project]
 name = "boxfab"
 version = "0.1.0a1"
-description = "Python SDK for Boxfab, an agent execution cloud of Firecracker sandboxes (derived from the E2B SDK)"
+description = "Python SDK for BoxFab, an agent execution cloud of Firecracker sandboxes (derived from the E2B SDK)"
 authors = [{ name = "ContextFab, Inc." }]
 license = "MIT"
 license-files = ["LICENSE", "LICENSE-E2B"]

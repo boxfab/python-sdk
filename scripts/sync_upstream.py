@@ -13,7 +13,7 @@ What the rules do (see UPSTREAM.md for the reasoning):
   2. every E2B_* environment variable the SDK reads -> BOXFAB_* (no E2B_* fallback at all)
   3. default domain e2b.app -> DEFAULT_DOMAIN below
   4. distribution metadata and User-Agent -> boxfab
-  5. client class E2B -> Boxfab (E2B kept as an alias for drop-in porting)
+  5. client class E2B -> BoxFab (E2B kept as an alias for drop-in porting)
 Shell variables used inside sandboxes (E2B_HEREDOC_*, E2B_EXIT) and the list of E2B-hosted
 sandbox domains (sandbox_domains.py) are deliberately left alone.
 """
@@ -83,30 +83,30 @@ EXACT = [
     (
         "boxfab/api/__init__.py",
         "please visit the API Keys tab at https://e2b.dev/dashboard?tab=keys to get your API key. ",
-        f"get one from your Boxfab administrator (keys are shown at {DASHBOARD_URL}). ",
+        f"get one from your BoxFab administrator (keys are shown at {DASHBOARD_URL}). ",
         1,
     ),
-    # Client class: Boxfab is the name, E2B stays importable as an alias.
-    ("boxfab/client.py", "class E2BClientParams(", "class BoxfabClientParams(", 1),
-    ("boxfab/client.py", "class E2B:", "class Boxfab:", 1),
-    ("boxfab/client.py", "Unpack[E2BClientParams]", "Unpack[BoxfabClientParams]", 1),
-    ("boxfab/client.py", "from boxfab import E2B\n", "from boxfab import Boxfab\n", 1),
+    # Client class: BoxFab is the name, E2B stays importable as an alias.
+    ("boxfab/client.py", "class E2BClientParams(", "class BoxFabClientParams(", 1),
+    ("boxfab/client.py", "class E2B:", "class BoxFab:", 1),
+    ("boxfab/client.py", "Unpack[E2BClientParams]", "Unpack[BoxFabClientParams]", 1),
+    ("boxfab/client.py", "from boxfab import E2B\n", "from boxfab import BoxFab\n", 1),
     (
         "boxfab/client.py",
         'client = E2B(api_key="e2b_...", domain="e2b.dev")',
-        f'client = Boxfab(api_key="e2b_...", domain="{DEFAULT_DOMAIN}")',
+        f'client = BoxFab(api_key="e2b_...", domain="{DEFAULT_DOMAIN}")',
         1,
     ),
     (
         "boxfab/__init__.py",
         "from .client import E2B, E2BClientParams",
-        "from .client import Boxfab, BoxfabClientParams, E2B, E2BClientParams",
+        "from .client import BoxFab, BoxFabClientParams, E2B, E2BClientParams",
         1,
     ),
     (
         "boxfab/__init__.py",
         '    "E2B",\n',
-        '    "Boxfab",\n    "BoxfabClientParams",\n    "E2B",\n',
+        '    "BoxFab",\n    "BoxFabClientParams",\n    "E2B",\n',
         1,
     ),
 ]
@@ -205,8 +205,8 @@ def apply_exact(rules, required: bool):
 CLIENT_ALIAS = """
 
 # Upstream names, kept so code written for e2b ports by changing only the import.
-E2B = Boxfab
-E2BClientParams = BoxfabClientParams
+E2B = BoxFab
+E2BClientParams = BoxFabClientParams
 """
 
 

@@ -12,7 +12,7 @@ from boxfab.volume.volume_sync import Volume
 T = TypeVar("T")
 
 
-class BoxfabClientParams(ApiParams, total=False):
+class BoxFabClientParams(ApiParams, total=False):
     """Params bound to an :class:`E2B` client, used as the defaults for every
     call made through its resource classes. Same shape as :class:`ApiParams`."""
 
@@ -25,7 +25,7 @@ def _bind(cls: Type[T], api_params: ApiParams) -> Type[T]:
     )
 
 
-class Boxfab:
+class BoxFab:
     """
     E2B client with an explicitly bound connection configuration.
 
@@ -41,9 +41,9 @@ class Boxfab:
 
     Example:
     ```python
-    from boxfab import Boxfab
+    from boxfab import BoxFab
 
-    client = Boxfab(api_key="e2b_...", domain="sandd.contextfab.io")
+    client = BoxFab(api_key="e2b_...", domain="sandd.contextfab.io")
 
     sandbox = client.Sandbox.create()
     volumes = client.Volume.list()
@@ -51,7 +51,7 @@ class Boxfab:
     ```
     """
 
-    def __init__(self, **opts: Unpack[BoxfabClientParams]):
+    def __init__(self, **opts: Unpack[BoxFabClientParams]):
         """
         Create a new client with the API params bound to it.
 
@@ -88,5 +88,5 @@ class Boxfab:
 
 
 # Upstream names, kept so code written for e2b ports by changing only the import.
-E2B = Boxfab
-E2BClientParams = BoxfabClientParams
+E2B = BoxFab
+E2BClientParams = BoxFabClientParams

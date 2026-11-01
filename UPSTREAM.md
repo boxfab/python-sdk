@@ -1,8 +1,8 @@
 # Upstream
 
-The Boxfab Python SDK is derived from the open-source
+The BoxFab Python SDK is derived from the open-source
 [E2B Python SDK](https://github.com/e2b-dev/E2B/tree/main/packages/python-sdk) and includes
-modifications for Boxfab's sandbox infrastructure. Boxfab is an independent project and is not
+modifications for BoxFab's sandbox infrastructure. BoxFab is an independent project and is not
 affiliated with or endorsed by E2B.
 
 ## Pinned source
@@ -24,11 +24,11 @@ the upstream package and applies a fixed, asserted set of rewrites:
 | Change | Why |
 |---|---|
 | package `e2b` → `boxfab` (directory, imports, module paths) | distribution and import name |
-| every `E2B_*` variable the SDK reads → `BOXFAB_*`, no fallback | a Boxfab install must never pick up an E2B key or domain, nor send one elsewhere |
-| default domain `e2b.app` → `sandd.contextfab.io` | current Boxfab deployment; no implicit calls to E2B's service |
+| every `E2B_*` variable the SDK reads → `BOXFAB_*`, no fallback | a BoxFab install must never pick up an E2B key or domain, nor send one elsewhere |
+| default domain `e2b.app` → `sandd.contextfab.io` | current BoxFab deployment; no implicit calls to E2B's service |
 | `importlib.metadata.version("e2b")` → `"boxfab"`, `publisher` header, User-Agent `boxfab-python-sdk/<ver>` | the renamed distribution would otherwise fail on import |
-| missing-key error message points to the Boxfab dashboard | actionable message |
-| client class `E2B` → `Boxfab` (`E2B` kept as an alias) | branding; existing code ports by changing the import |
+| missing-key error message points to the BoxFab dashboard | actionable message |
+| client class `E2B` → `BoxFab` (`E2B` kept as an alias) | branding; existing code ports by changing the import |
 | upstream unit tests asserting the `e2b.app` default use ours | follow the default change |
 
 Deliberately unchanged:
@@ -69,15 +69,15 @@ against `sandd.contextfab.io`, using a test team's key:
 The `boxfab` runs had `E2B_API_KEY` and `E2B_DOMAIN` set to E2B's service to confirm they are
 ignored. Connection tracing during the run showed TCP only to the deployment's edge address
 (port 443) and the local DNS resolver. TLS verification is upstream's default (on). Upstream's
-offline unit tests: 485 pass after the rewrites; Boxfab's own config tests (`tests_boxfab/`): 8
-pass. Not yet verified on Boxfab: template builds, volumes, secrets, MCP, IAM tokens, network
+offline unit tests: 485 pass after the rewrites; BoxFab's own config tests (`tests_boxfab/`): 8
+pass. Not yet verified on BoxFab: template builds, volumes, secrets, MCP, IAM tokens, network
 rules, git helpers, PTY, filesystem watch.
 
 ## Licensing
 
 The SDK subtree is licensed MIT (`LICENSE-E2B`, "Copyright (c) 2025 FOUNDRYLABS, INC."), which is
 also what the `e2b` distribution declares on PyPI. The E2B monorepo root is Apache-2.0; neither
-level ships a NOTICE file. Boxfab's changes are also MIT (`LICENSE`), Copyright (c) 2026 ContextFab, Inc. Both license files are
+level ships a NOTICE file. BoxFab's changes are also MIT (`LICENSE`), Copyright (c) 2026 ContextFab, Inc. Both license files are
 included in the wheel and sdist.
 
 ## Updating
