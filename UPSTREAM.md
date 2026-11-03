@@ -25,7 +25,8 @@ the upstream package and applies a fixed, asserted set of rewrites:
 |---|---|
 | package `e2b` → `boxfab` (directory, imports, module paths) | distribution and import name |
 | every `E2B_*` variable the SDK reads → `BOXFAB_*`, no fallback | a BoxFab install must never pick up an E2B key or domain, nor send one elsewhere |
-| default domain `e2b.app` → `sandd.contextfab.io` | current BoxFab deployment; no implicit calls to E2B's service |
+| default domain `e2b.app` → `boxfab.io` | BoxFab's domain; no implicit calls to E2B's service |
+| product name in docstrings and comments `E2B` → `BoxFab`, `e2b.dev/docs` links → `boxfab.dev/docs` (lines that use the `E2B` alias as code are left alone; the number of changed lines is asserted) | the SDK's own documentation names the product it talks to |
 | `importlib.metadata.version("e2b")` → `"boxfab"`, `publisher` header, User-Agent `boxfab-python-sdk/<ver>` | the renamed distribution would otherwise fail on import |
 | missing-key error message points to the BoxFab dashboard | actionable message |
 | client class `E2B` → `BoxFab` (`E2B` kept as an alias) | branding; existing code ports by changing the import |
@@ -40,7 +41,6 @@ Deliberately unchanged:
 - Shell variables inside generated template build steps (`E2B_HEREDOC_*`, `E2B_EXIT`), and
   wire-level identifiers (headers such as `E2b-Sandbox-Id`, the `e2b_` API-key prefix, generated
   API and envd clients): they are protocol, not branding.
-- Docstring prose that says "E2B": left as upstream to keep the diff small.
 - The dependency `e2b-dockerfile-utils` (Apache-2.0, published on PyPI by E2B) is used as is,
   not vendored or renamed.
 

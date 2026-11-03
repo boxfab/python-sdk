@@ -43,7 +43,7 @@ class DualMethod:
 
     ``static_fn`` may be a ``classmethod``, in which case it is bound to the
     accessed class so it can read class-level state (e.g. the API params an
-    :class:`e2b.E2B` client bound to a generated subclass).
+    :class:`BoxFab` client bound to a generated subclass).
     """
 
     def __init__(self, static_fn, instance_fn):

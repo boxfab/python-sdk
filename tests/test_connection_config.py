@@ -10,7 +10,7 @@ def test_api_url_defaults_correctly(monkeypatch):
     monkeypatch.delenv("BOXFAB_API_URL", raising=False)
 
     config = ConnectionConfig()
-    assert config.api_url == "https://api.sandd.contextfab.io"
+    assert config.api_url == "https://api.boxfab.io"
 
 
 def test_api_url_in_args():

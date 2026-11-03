@@ -13,7 +13,7 @@ T = TypeVar("T")
 
 
 class BoxFabClientParams(ApiParams, total=False):
-    """Params bound to an :class:`E2B` client, used as the defaults for every
+    """Params bound to an :class:`BoxFab` client, used as the defaults for every
     call made through its resource classes. Same shape as :class:`ApiParams`."""
 
 
@@ -27,7 +27,7 @@ def _bind(cls: Type[T], api_params: ApiParams) -> Type[T]:
 
 class BoxFab:
     """
-    E2B client with an explicitly bound connection configuration.
+    BoxFab client with an explicitly bound connection configuration.
 
     The resource classes exposed by the client (`Sandbox`, `AsyncSandbox`,
     `Volume`, `AsyncVolume`, `Template`, `AsyncTemplate`, `Secret`,
@@ -43,7 +43,7 @@ class BoxFab:
     ```python
     from boxfab import BoxFab
 
-    client = BoxFab(api_key="e2b_...", domain="sandd.contextfab.io")
+    client = BoxFab(api_key="e2b_...", domain="boxfab.io")
 
     sandbox = client.Sandbox.create()
     volumes = client.Volume.list()

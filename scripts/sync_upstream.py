@@ -14,6 +14,7 @@ What the rules do (see UPSTREAM.md for the reasoning):
   3. default domain e2b.app -> DEFAULT_DOMAIN below
   4. distribution metadata and User-Agent -> boxfab
   5. client class E2B -> BoxFab (E2B kept as an alias for drop-in porting)
+  6. product name in docstrings and comments E2B -> BoxFab, e2b.dev docs links -> DOCS_URL
 Shell variables used inside sandboxes (E2B_HEREDOC_*, E2B_EXIT) and the list of E2B-hosted
 sandbox domains (sandbox_domains.py) are deliberately left alone.
 """
@@ -30,8 +31,9 @@ ROOT = Path(__file__).resolve().parent.parent
 UPSTREAM_REPO = "https://github.com/e2b-dev/E2B.git"
 SDK_SUBDIR = "packages/python-sdk"
 
-DEFAULT_DOMAIN = "sandd.contextfab.io"
-DASHBOARD_URL = "https://dashboard.sandd.contextfab.io"
+DEFAULT_DOMAIN = "boxfab.io"
+DASHBOARD_URL = "https://dashboard.boxfab.io"
+DOCS_URL = "https://boxfab.dev/docs"
 
 # Environment variables the SDK reads. Renamed everywhere (code, docstrings, tests).
 ENV_VARS = [
@@ -210,6 +212,36 @@ E2BClientParams = BoxFabClientParams
 """
 
 
+# Lines that use the E2B / E2BClientParams alias as code (imports, __all__): left as they are.
+PROSE_KEEP = re.compile(r'^\s*(from \S+ import .*|"E2B",)$')
+
+
+def rename_product_name(path: Path) -> int:
+    """Product name in docstrings and comments: E2B -> BoxFab; docs links -> DOCS_URL."""
+    lines = path.read_text().split("\n")
+    n = 0
+    for i, line in enumerate(lines):
+        if PROSE_KEEP.match(line):
+            continue
+        new = re.sub(r":class:`(?:e2b\.)?E2B`", ":class:`BoxFab`", line)
+        new = re.sub(r"\b([Aa])n E2B\b", r"\1 BoxFab", new)
+        new = re.sub(r"\bE2B\b", "BoxFab", new)
+        new = new.replace("https://e2b.dev/docs", DOCS_URL)
+        new = new.replace(
+            "${PORT}-sandboxid.e2b.app", f"${{PORT}}-sandboxid.{DEFAULT_DOMAIN}"
+        )
+        if new != line:
+            n += 1
+            lines[i] = new
+    path.write_text("\n".join(lines))
+    return n
+
+
+PRODUCT_NAME_LINES = (
+    60  # lines changed at the pinned commit; a different count fails the sync
+)
+
+
 def audit():
     problems = []
     for p in list((ROOT / "boxfab").rglob("*.py")):
@@ -259,6 +291,12 @@ def main():
     ):
         rewrite(p, mods)
     apply_exact(EXACT, required=True)
+    changed = sum(rename_product_name(p) for p in (ROOT / "boxfab").rglob("*.py"))
+    if PRODUCT_NAME_LINES is not None and changed != PRODUCT_NAME_LINES:
+        sys.exit(
+            f"product-name rewrite changed {changed} lines, expected {PRODUCT_NAME_LINES}"
+        )
+    print(f"product-name rewrite: {changed} lines", file=sys.stderr)
     client = ROOT / "boxfab" / "client.py"
     client.write_text(client.read_text().rstrip("\n") + "\n" + CLIENT_ALIAS)
     apply_exact(TEST_EXACT, required=True)

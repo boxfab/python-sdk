@@ -94,17 +94,17 @@ class ApiParams(TypedDict, total=False):
     """Additional headers to send with the request. Deprecated, use api_headers instead."""
 
     api_headers: Optional[Dict[str, str]]
-    """Additional headers to send with E2B API requests."""
+    """Additional headers to send with BoxFab API requests."""
 
     api_key: Optional[str]
-    """E2B API Key to use for authentication, defaults to `BOXFAB_API_KEY` environment variable."""
+    """BoxFab API Key to use for authentication, defaults to `BOXFAB_API_KEY` environment variable."""
 
     validate_api_key: Optional[bool]
     """Deprecated: the API key format is no longer validated on the client side;
     this option has no effect."""
 
     domain: Optional[str]
-    """E2B domain to use for authentication, defaults to `BOXFAB_DOMAIN` environment variable."""
+    """BoxFab domain to use for authentication, defaults to `BOXFAB_DOMAIN` environment variable."""
 
     api_url: Optional[str]
     """URL to use for the API, defaults to `BOXFAB_API_URL` environment variable or `https://api.<domain>`. For internal use only.
@@ -123,7 +123,7 @@ class ApiParams(TypedDict, total=False):
     :deprecated: `sandbox_url` and the `BOXFAB_SANDBOX_URL` environment variable will be removed in the next major version."""
 
     http_version: Optional[HttpVersion]
-    """HTTP version for requests to the E2B API and to sandboxes (commands,
+    """HTTP version for requests to the BoxFab API and to sandboxes (commands,
     filesystem, PTY), defaults to `BOXFAB_HTTP_VERSION` environment variable or
     `"2"`. `"1.1"` pins them to HTTP/1.1, which
     uses one connection per concurrent request instead of multiplexing streams
@@ -147,7 +147,7 @@ def merge_api_params(
     bound_params: Optional[ApiParams], params: Mapping[str, object]
 ) -> ApiParams:
     """
-    Merge the API params bound to a class (e.g. by an :class:`e2b.E2B` client)
+    Merge the API params bound to a class (e.g. by an :class:`BoxFab` client)
     with the per-call params. Per-call params win, then the bound params, then
     the environment variables resolved by :class:`ConnectionConfig`.
 
@@ -168,7 +168,7 @@ class ClientFactory:
     """
     Base class for the resource classes (`Sandbox`, `Volume`, `Template`,
     `Secret`) whose classmethods build a :class:`ConnectionConfig` from per-call
-    params. An :class:`e2b.E2B` client exposes subclasses of these with its own
+    params. An :class:`BoxFab` client exposes subclasses of these with its own
     params bound, and every classmethod resolves them through
     :meth:`_resolve_api_params`.
 
@@ -176,7 +176,7 @@ class ClientFactory:
     """
 
     _bound_api_params: ApiParams = {}
-    """API params bound to this class by an :class:`e2b.E2B` client.
+    """API params bound to this class by an :class:`BoxFab` client.
 
     Empty on the base classes, so the env-configured default path is unchanged.
 
@@ -205,7 +205,7 @@ class ConnectionConfig:
     @classmethod
     def set_integration(cls, integration: Optional[str]) -> None:
         """
-        Identify traffic from an integration wrapping the E2B SDK by appending
+        Identify traffic from an integration wrapping the BoxFab SDK by appending
         ``integration`` (e.g. ``"e2b-code-interpreter/0.1.0"``) to the
         ``User-Agent`` header of every request.
 
@@ -220,7 +220,7 @@ class ConnectionConfig:
 
     @staticmethod
     def _domain():
-        return os.getenv("BOXFAB_DOMAIN") or "sandd.contextfab.io"
+        return os.getenv("BOXFAB_DOMAIN") or "boxfab.io"
 
     @staticmethod
     def _debug():
@@ -454,7 +454,7 @@ class ConnectionConfig:
     @property
     def sandbox_headers(self):
         """
-        We need this separate as we use the same header for E2B access token to API and envd access token to sandbox.
+        We need this separate as we use the same header for BoxFab access token to API and envd access token to sandbox.
         """
         return {
             "User-Agent": self.headers["User-Agent"],

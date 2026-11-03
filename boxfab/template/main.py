@@ -31,7 +31,7 @@ from types import TracebackType
 
 class TemplateBuilder:
     """
-    Builder class for adding instructions to an E2B template.
+    Builder class for adding instructions to a BoxFab template.
 
     All methods return self to allow method chaining.
     """
@@ -752,7 +752,7 @@ class TemplateFinal:
 
 class TemplateBase(ClientFactory):
     """
-    Base class for building E2B sandbox templates.
+    Base class for building BoxFab sandbox templates.
     """
 
     _logs_refresh_frequency = 0.2
@@ -938,7 +938,7 @@ class TemplateBase(ClientFactory):
 
     def from_base_image(self) -> TemplateBuilder:
         """
-        Start template from the E2B base image (e2bdev/base:latest).
+        Start template from the BoxFab base image (e2bdev/base:latest).
 
         :return: `TemplateBuilder` class
 
@@ -999,9 +999,9 @@ class TemplateBase(ClientFactory):
 
     def from_template(self, template: str) -> TemplateBuilder:
         """
-        Start template from an existing E2B template.
+        Start template from an existing BoxFab template.
 
-        :param template: E2B template ID or alias
+        :param template: BoxFab template ID or alias
 
         :return: `TemplateBuilder` class
 
@@ -1159,13 +1159,13 @@ class TemplateBase(ClientFactory):
         """
         Convert a template to Dockerfile format.
 
-        Note: Templates based on other E2B templates cannot be converted to Dockerfile.
+        Note: Templates based on other BoxFab templates cannot be converted to Dockerfile.
 
         :param template: The template to convert (TemplateBuilder or TemplateFinal instance)
 
         :return: Dockerfile string representation
 
-        :raises ValueError: If the template is based on another E2B template or has no base image
+        :raises ValueError: If the template is based on another BoxFab template or has no base image
 
         Example
         ```python
@@ -1176,7 +1176,7 @@ class TemplateBase(ClientFactory):
         if template._template._base_template is not None:
             raise ValueError(
                 "Cannot convert template built from another template to Dockerfile. "
-                "Templates based on other templates can only be built using the E2B API."
+                "Templates based on other templates can only be built using the BoxFab API."
             )
 
         if template._template._base_image is None:

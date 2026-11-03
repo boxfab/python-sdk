@@ -1,5 +1,5 @@
 """
-Workload identity (iam) helpers for E2B sandboxes.
+Workload identity (iam) helpers for BoxFab sandboxes.
 """
 
 import re

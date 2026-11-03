@@ -78,7 +78,7 @@ from boxfab.volume.utils import (
 
 
 class AsyncVolume(ClientFactory):
-    """E2B Volume for persistent storage that can be mounted to sandboxes (async)."""
+    """BoxFab Volume for persistent storage that can be mounted to sandboxes (async)."""
 
     def __init__(
         self,

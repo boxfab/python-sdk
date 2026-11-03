@@ -321,7 +321,7 @@ class SandboxEgressProxyOpts(TypedDict):
     for that connection, so a DNS change cannot redirect a connection that is
     already being established.
 
-    The proxy has to be reachable from E2B's infrastructure: an address that
+    The proxy has to be reachable from BoxFab's infrastructure: an address that
     does not resolve, or that resolves into a private or otherwise internal
     range, is rejected before the sandbox exists.
     """
@@ -446,7 +446,7 @@ class SandboxNetworkOpts(TypedDict):
     proxy, and per-host :attr:`rules` transforms still apply before the
     connection is dialed. Omit it to send the sandbox's traffic out directly.
 
-    Available on E2B Cloud and in BYOC deployments; a sandbox that names a
+    Available on BoxFab Cloud and in BYOC deployments; a sandbox that names a
     proxy on a deployment built from the open source ``e2b-dev/runtime``
     repository is rejected as unsupported.
 
@@ -493,7 +493,7 @@ class SandboxNetworkOpts(TypedDict):
     mask_request_host: NotRequired[str]
     """
     Allows specifying a custom host mask for all sandbox requests.
-    Supports ${PORT} variable. Defaults to "${PORT}-sandboxid.e2b.app".
+    Supports ${PORT} variable. Defaults to "${PORT}-sandboxid.boxfab.io".
 
     Examples:
     - Custom subdomain: `"${PORT}-myapp.example.com"`
@@ -504,7 +504,7 @@ class SandboxNetworkOpts(TypedDict):
     Ports whose public URLs should connect to the sandbox using HTTPS.
 
     Use this when the service listening on the port serves HTTPS (TLS) itself.
-    This is not TLS passthrough — traffic is still terminated at the E2B proxy
+    This is not TLS passthrough — traffic is still terminated at the BoxFab proxy
     and re-encrypted on the hop to the sandbox. The backend certificate is not
     verified, so self-signed certificates work.
 

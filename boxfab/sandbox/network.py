@@ -1,5 +1,5 @@
 """
-Network configuration helpers for E2B sandboxes.
+Network configuration helpers for BoxFab sandboxes.
 """
 
 """

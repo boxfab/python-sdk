@@ -1,14 +1,14 @@
 """
 Secure sandboxed cloud environments made for AI agents and AI apps.
 
-Check docs [here](https://e2b.dev/docs).
+Check docs [here](https://boxfab.dev/docs).
 
-E2B Sandbox is a secure cloud sandbox environment made for AI agents and AI
+BoxFab Sandbox is a secure cloud sandbox environment made for AI agents and AI
 apps.
 Sandboxes allow AI agents and apps to have long running cloud secure environments.
 In these environments, large language models can use the same tools as humans do.
 
-E2B Python SDK supports both sync and async API:
+BoxFab Python SDK supports both sync and async API:
 
 ```py
 from boxfab import Sandbox

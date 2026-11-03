@@ -7,7 +7,7 @@ def test_volume_api_url_defaults_correctly(monkeypatch):
     monkeypatch.delenv("BOXFAB_DEBUG", raising=False)
 
     config = VolumeConnectionConfig()
-    assert config.api_url == "https://api.sandd.contextfab.io"
+    assert config.api_url == "https://api.boxfab.io"
 
 
 def test_volume_api_url_in_args():

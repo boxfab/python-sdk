@@ -136,7 +136,7 @@ def get_pyqwest_transport(
                 max_connections_per_address=max_connections,
                 read_timeout=read_timeout,
                 # `None` leaves the version to ALPN on TLS connections (HTTP/2
-                # against the E2B API and envd) and uses HTTP/1 for plaintext,
+                # against the BoxFab API and envd) and uses HTTP/1 for plaintext,
                 # like the http2-enabled httpx transport this replaced.
                 http_version=HTTPVersion.HTTP1 if http_version == "1.1" else None,
                 # Redirects belong to the httpx client above (which the generated
@@ -184,7 +184,7 @@ def get_transport(
 ) -> PyqwestTransport:
     """The shared httpx transport factory for the control-plane REST API and
     envd HTTP API (file transfers, health checks). For TLS connections ALPN
-    negotiates the HTTP version (HTTP/2 against the E2B API), like the
+    negotiates the HTTP version (HTTP/2 against the BoxFab API), like the
     http2-enabled httpx transport this replaced.
 
     ``http_version`` defaults to the config's ``http_version`` option;

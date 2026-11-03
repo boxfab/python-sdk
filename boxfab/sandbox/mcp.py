@@ -1826,7 +1826,7 @@ class McpServer(TypedDict, closed=True):
     """
     e2b: NotRequired[E2b]
     """
-    Giving Claude ability to run code with E2B via MCP (Model Context Protocol).
+    Giving Claude ability to run code with BoxFab via MCP (Model Context Protocol).
     """
     edubase: NotRequired[Edubase]
     """

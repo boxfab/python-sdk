@@ -86,7 +86,7 @@ jobs:
         run: |
           python -m venv /tmp/clean
           /tmp/clean/bin/pip install dist/*.whl
-          cd /tmp && /tmp/clean/bin/python -c "import boxfab, importlib.metadata as m; from boxfab import Sandbox, AsyncSandbox, BoxFab; assert boxfab.ConnectionConfig().domain == 'sandd.contextfab.io'; print(m.version('boxfab'), boxfab.__file__)"
+          cd /tmp && /tmp/clean/bin/python -c "import boxfab, importlib.metadata as m; from boxfab import Sandbox, AsyncSandbox, BoxFab; assert boxfab.ConnectionConfig().domain == 'boxfab.io'; print(m.version('boxfab'), boxfab.__file__)"
       - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
         with:
           name: dist

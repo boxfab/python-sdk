@@ -47,7 +47,7 @@ SandboxVolumeMount = Dict[str, Union[Volume, str]]
 
 class Sandbox(SandboxApi):
     """
-    E2B cloud sandbox is a secure and isolated cloud environment.
+    BoxFab cloud sandbox is a secure and isolated cloud environment.
 
     The sandbox allows you to:
     - Access Linux OS
@@ -56,7 +56,7 @@ class Sandbox(SandboxApi):
     - Run isolated code
     - Access the internet
 
-    Check docs [here](https://e2b.dev/docs).
+    Check docs [here](https://boxfab.dev/docs).
 
     Use the `Sandbox.create()` to create a new sandbox.
 
@@ -282,7 +282,7 @@ class Sandbox(SandboxApi):
             Rejected where filesystem-only resume is not enabled; a no-op for a snapshot
             without memory or a sandbox that is already running. A value outside the two
             literals raises `InvalidArgumentException`.
-            Needs a control plane that knows this option: E2B Cloud, or a self-hosted or BYOC
+            Needs a control plane that knows this option: BoxFab Cloud, or a self-hosted or BYOC
             deployment built from `e2b-dev/runtime` at or after the commit that added the `memory`
             field to connect/resume (2026-08-20). An older control plane drops the field and
             restores memory while answering as if the request had succeeded.
@@ -325,7 +325,7 @@ class Sandbox(SandboxApi):
             Rejected where filesystem-only resume is not enabled; a no-op for a snapshot
             without memory or a sandbox that is already running. A value outside the two
             literals raises `InvalidArgumentException`.
-            Needs a control plane that knows this option: E2B Cloud, or a self-hosted or BYOC
+            Needs a control plane that knows this option: BoxFab Cloud, or a self-hosted or BYOC
             deployment built from `e2b-dev/runtime` at or after the commit that added the `memory`
             field to connect/resume (2026-08-20). An older control plane drops the field and
             restores memory while answering as if the request had succeeded.
@@ -363,7 +363,7 @@ class Sandbox(SandboxApi):
             Rejected where filesystem-only resume is not enabled; a no-op for a snapshot
             without memory or a sandbox that is already running. A value outside the two
             literals raises `InvalidArgumentException`.
-            Needs a control plane that knows this option: E2B Cloud, or a self-hosted or BYOC
+            Needs a control plane that knows this option: BoxFab Cloud, or a self-hosted or BYOC
             deployment built from `e2b-dev/runtime` at or after the commit that added the `memory`
             field to connect/resume (2026-08-20). An older control plane drops the field and
             restores memory while answering as if the request had succeeded.

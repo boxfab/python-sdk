@@ -168,7 +168,7 @@ RegistryConfig = Union[GenericDockerRegistry, AWSRegistry, GCPRegistry]
 
 class TemplateType(TypedDict):
     """
-    Internal representation of a template for the E2B build API.
+    Internal representation of a template for the BoxFab build API.
     """
 
     fromImage: NotRequired[str]

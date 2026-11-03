@@ -9,7 +9,7 @@ import pytest
 import boxfab
 from boxfab import ConnectionConfig, VolumeConnectionConfig
 
-DEFAULT_DOMAIN = "sandd.contextfab.io"
+DEFAULT_DOMAIN = "boxfab.io"
 PKG = pathlib.Path(boxfab.__file__).parent
 
 

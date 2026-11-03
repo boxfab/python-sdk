@@ -27,7 +27,7 @@ from boxfab.template.utils import normalize_build_arguments, read_dockerignore
 
 class Template(TemplateBase):
     """
-    Synchronous template builder for E2B sandboxes.
+    Synchronous template builder for BoxFab sandboxes.
     """
 
     @staticmethod
@@ -211,7 +211,7 @@ class Template(TemplateBase):
         **opts: Unpack[ApiParams],
     ) -> BuildInfo:
         """
-        Build and deploy a template to E2B infrastructure.
+        Build and deploy a template to BoxFab infrastructure.
 
         :param template: The template to build
         :param name: Template name in 'name' or 'name:tag' format
@@ -318,7 +318,7 @@ class Template(TemplateBase):
         **opts: Unpack[ApiParams],
     ) -> BuildInfo:
         """
-        Build and deploy a template to E2B infrastructure without waiting for completion.
+        Build and deploy a template to BoxFab infrastructure without waiting for completion.
 
         :param template: The template to build
         :param name: Template name in 'name' or 'name:tag' format

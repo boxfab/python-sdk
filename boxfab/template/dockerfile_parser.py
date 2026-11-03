@@ -263,7 +263,7 @@ class _DockerfileConverter:
 
         self._apply_start_cmd()
 
-        # Set the user and workdir to the E2B defaults
+        # Set the user and workdir to the BoxFab defaults
         if not self._user_changed:
             self._template_builder.set_user("user")
         if not self._workdir_changed:

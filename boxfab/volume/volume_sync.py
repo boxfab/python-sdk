@@ -77,7 +77,7 @@ from boxfab.volume.utils import (
 
 
 class Volume(ClientFactory):
-    """E2B Volume for persistent storage that can be mounted to sandboxes."""
+    """BoxFab Volume for persistent storage that can be mounted to sandboxes."""
 
     def __init__(
         self,

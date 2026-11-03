@@ -27,7 +27,7 @@ from boxfab.api.client_async import get_api_client
 
 class AsyncTemplate(TemplateBase):
     """
-    Asynchronous template builder for E2B sandboxes.
+    Asynchronous template builder for BoxFab sandboxes.
     """
 
     @staticmethod
@@ -211,7 +211,7 @@ class AsyncTemplate(TemplateBase):
         **opts: Unpack[ApiParams],
     ) -> BuildInfo:
         """
-        Build and deploy a template to E2B infrastructure.
+        Build and deploy a template to BoxFab infrastructure.
 
         :param template: The template to build
         :param name: Template name in 'name' or 'name:tag' format
@@ -317,7 +317,7 @@ class AsyncTemplate(TemplateBase):
         **opts: Unpack[ApiParams],
     ) -> BuildInfo:
         """
-        Build and deploy a template to E2B infrastructure without waiting for completion.
+        Build and deploy a template to BoxFab infrastructure without waiting for completion.
 
         :param template: The template to build
         :param name: Template name in 'name' or 'name:tag' format

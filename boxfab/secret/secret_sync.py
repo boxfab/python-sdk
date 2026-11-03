@@ -82,7 +82,7 @@ class SecretPaginator(SecretPaginatorBase):
 
 class Secret(SecretBase):
     """
-    Module for managing E2B secrets and workload identity helpers.
+    Module for managing BoxFab secrets and workload identity helpers.
 
     Secret values are write-only: they are accepted by ``create`` and
     ``update`` but never returned by any read surface.
