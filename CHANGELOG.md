@@ -2,7 +2,7 @@
 
 Upstream E2B changes are in `CHANGELOG-E2B.md`.
 
-## 0.1.0a2 (unreleased)
+## 0.1.0a2 (2026-11-03)
 
 - Default domain `boxfab.io` (was `sandd.contextfab.io`, which keeps working until it is retired);
   the missing-key message points to `https://dashboard.boxfab.io`.
