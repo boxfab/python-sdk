@@ -2,7 +2,7 @@
 
 Upstream E2B changes are in `CHANGELOG-E2B.md`.
 
-## Unreleased
+## 0.1.0a3 (2026-11-13)
 
 - One `LICENSE` file: the MIT text with the upstream copyright line (FOUNDRYLABS, INC.) and
   ContextFab's; `LICENSE-E2B` is merged into it.
