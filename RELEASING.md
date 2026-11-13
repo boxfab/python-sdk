@@ -17,12 +17,12 @@ anywhere: the upload uses PyPI Trusted Publishing (OIDC).
 | `twine check --strict`, name/version/license metadata, license files, file layout, secret and internal-address scan, clean-venv import | `ci.yml` job `build` + `scripts/check_dist.py` |
 | those exact files are uploaded; only this job has `id-token: write` | `publish.yml` job `publish` |
 | deploys only from `v*` tags | environment `pypi` |
+| a required reviewer approves each publication; admins cannot bypass it | environment `pypi` |
 | one publication at a time, never cancelled | `concurrency: pypi-publish` |
 | actions pinned to commit SHAs; only GitHub-owned, `astral-sh/setup-uv`, `pypa/gh-action-pypi-publish` allowed | workflow files + repository Actions settings |
 
-While the repository is private, GitHub Team cannot require an environment reviewer, so the
-human approval is the act of publishing the GitHub Release. After the repository is public, add
-a required reviewer to the `pypi` environment.
+Two human steps are needed for every upload: publishing the GitHub Release, and approving the
+`pypi` deployment when the `publish` job waits for it.
 
 ## One-time setup (owner)
 
@@ -61,14 +61,15 @@ a required reviewer to the `pypi` environment.
    - Title: `v<version>`; notes from `CHANGELOG.md`
    - For a/b/rc versions tick *Set as a pre-release*
    - *Publish release*
-5. Watch Actions → *Publish to PyPI*: `verify` → `ci / …` → `publish`. Then check
+5. Watch Actions → *Publish to PyPI*: `verify` → `ci / …` → `publish`; when `publish` waits,
+   *Review deployments* → `pypi` → *Approve and deploy*. Then check
    https://pypi.org/project/boxfab/ and, in a clean venv, `pip install boxfab==<version>` and
    `python examples/hello_sandbox.py` with `BOXFAB_API_KEY` set.
 
 ## If it fails
 
 - `verify` failed: the tag does not match the version or the commit is not on `main`. Nothing
-  was uploaded. The tag cannot be deleted; bump the version (e.g. `0.1.0a2`) and release again.
+  was uploaded. The tag cannot be deleted; bump the version (e.g. `0.1.0a4`) and release again.
 - `ci` failed: fix on `main` via PR, bump the version, release again.
 - `publish` failed on authentication: correct the PyPI trusted-publisher fields, then *Re-run
   failed jobs* on the same run (the same files are uploaded).
