@@ -23,6 +23,8 @@ concurrency:
 
 env:
   UV_VERSION: "0.11.32"
+  # The E2B SDK version the README says works with BoxFab; the live-e2b job checks that claim.
+  E2B_SDK_VERSION: "2.62.0"
 
 jobs:
   live:
@@ -49,5 +51,35 @@ jobs:
           [ -n "$BOXFAB_DOMAIN" ] || unset BOXFAB_DOMAIN
           python -m venv /tmp/clean
           /tmp/clean/bin/pip install dist/*.whl pytest pytest-asyncio pytest-timeout
+          cp integration/test_live.py /tmp/ && cd /tmp
+          /tmp/clean/bin/pytest -q -p no:cacheprovider -o asyncio_mode=auto test_live.py
+
+  # The same suite with the unmodified E2B SDK against BoxFab (README "Using the E2B SDKs").
+  # Runs after the BoxFab job, so the two never add up against the team's concurrency limit.
+  live-e2b:
+    needs: live
+    runs-on: ubuntu-latest
+    environment: live
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - name: Live suite with e2b against BoxFab
+        env:
+          SDK: e2b
+          E2B_API_KEY: ${{ secrets.BOXFAB_API_KEY }}
+          # Never empty: without a domain the E2B SDK would send the key to E2B's own service.
+          E2B_DOMAIN: ${{ inputs.domain || 'boxfab.io' }}
+          LIVE_MAX_CONCURRENT: "5"
+        run: |
+          [ -n "$E2B_API_KEY" ] || { echo "BOXFAB_API_KEY is not set in the live environment"; exit 1; }
+          [ -n "$E2B_DOMAIN" ] || { echo "E2B_DOMAIN must be set"; exit 1; }
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install "e2b==$E2B_SDK_VERSION" pytest pytest-asyncio pytest-timeout
           cp integration/test_live.py /tmp/ && cd /tmp
           /tmp/clean/bin/pytest -q -p no:cacheprovider -o asyncio_mode=auto test_live.py

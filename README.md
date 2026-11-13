@@ -150,6 +150,8 @@ export E2B_API_KEY="<your BoxFab API key>"
 
 Without `E2B_DOMAIN`, the E2B SDKs send requests, including the key, to E2B's own service.
 
+Tested with `e2b` 2.62.0: the live test suite runs against BoxFab with both SDKs.
+
 ## License
 
 MIT, as the E2B Python SDK it is derived from; see [LICENSE](LICENSE).
