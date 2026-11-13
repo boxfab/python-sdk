@@ -8,6 +8,8 @@ Upstream E2B changes are in `CHANGELOG-E2B.md`.
   ContextFab's; `LICENSE-E2B` is merged into it.
 - README: "Under the hood" section (Firecracker, the E2B open-source infrastructure and SDK, and how
   to use the E2B SDKs with BoxFab).
+- Live tests also run the suite with the E2B SDK (`e2b` 2.62.0) against BoxFab (`live.yml`, job
+  `live-e2b`).
 - Releases 0.1.0a1 and 0.1.0a2 have no git tags in this repository; their code is at commits
   `908b46d` and `3110a4c`.
 
