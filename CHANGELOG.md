@@ -2,6 +2,11 @@
 
 Upstream E2B changes are in `CHANGELOG-E2B.md`.
 
+## Unreleased
+
+- README: the "Using the E2B SDKs and CLI" paragraph lists the E2B versions tested against
+  BoxFab (Python, JavaScript, CLI) and notes that `e2b auth login` signs in to E2B's service.
+
 ## 0.1.0a3 (2026-11-13)
 
 - One `LICENSE` file: the MIT text with the upstream copyright line (FOUNDRYLABS, INC.) and
