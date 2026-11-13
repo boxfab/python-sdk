@@ -3,7 +3,7 @@ name: Live tests
 # Runs the integration suite against the real deployment. Manual only (never on pull requests),
 # and the `live` environment only deploys from main, so a modified workflow on another branch
 # cannot read the key. BOXFAB_API_KEY is a secret of that environment and must belong to a
-# dedicated test team (not the seed team, not an admin token). Every test kills what it creates;
+# dedicated test team (never an admin token). Every test kills what it creates;
 # at most LIVE_MAX_CONCURRENT sandboxes run at once.
 
 on:
