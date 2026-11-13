@@ -280,7 +280,20 @@ def main():
             sdk / "tests", ROOT / "tests", ignore=shutil.ignore_patterns("__pycache__")
         )
         shutil.copy2(sdk / "pytest.ini", ROOT / "pytest.ini")
-        shutil.copy2(sdk / "LICENSE", ROOT / "LICENSE-E2B")
+        # LICENSE is MIT with upstream's copyright line and ours; it must keep upstream's
+        # copyright line and permission text word for word.
+        up_lic = (sdk / "LICENSE").read_text()
+        ours = (ROOT / "LICENSE").read_text()
+        up_copyright = [
+            line for line in up_lic.splitlines() if line.startswith("Copyright")
+        ]
+        up_body = up_lic[up_lic.index("Permission is hereby granted") :]
+        if not up_copyright or any(
+            line not in ours.splitlines() for line in up_copyright
+        ):
+            sys.exit(f"LICENSE lacks upstream's copyright line(s): {up_copyright}")
+        if not ours.endswith(up_body):
+            sys.exit("LICENSE permission text differs from upstream's")
         shutil.copy2(sdk / "CHANGELOG.md", ROOT / "CHANGELOG-E2B.md")
 
     mods = module_names(ROOT / "boxfab")

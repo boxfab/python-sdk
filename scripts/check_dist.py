@@ -4,7 +4,7 @@
     python scripts/check_dist.py dist/
 
 Checks: exactly one wheel and one sdist named for the pyproject name and version; metadata
-name, version and license; both license files present; no files outside the expected layout;
+name, version and license; the license file present; no files outside the expected layout;
 no credentials, private keys or internal infrastructure details in any file. Stdlib only.
 """
 
@@ -18,11 +18,10 @@ import zipfile
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
-LICENSES = ("LICENSE", "LICENSE-E2B")
+LICENSES = ("LICENSE",)
 SDIST_TOP = {
     "boxfab",
     "LICENSE",
-    "LICENSE-E2B",
     "README.md",
     "pyproject.toml",
     "pyproject.toml.orig",

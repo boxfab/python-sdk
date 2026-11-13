@@ -4,7 +4,7 @@ version = "0.1.0a2"
 description = "Python SDK for BoxFab, an agent execution cloud of Firecracker sandboxes"
 authors = [{ name = "ContextFab, Inc." }]
 license = "MIT"
-license-files = ["LICENSE", "LICENSE-E2B"]
+license-files = ["LICENSE"]
 readme = "README.md"
 requires-python = ">=3.11"
 classifiers = [

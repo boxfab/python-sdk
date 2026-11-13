@@ -2,6 +2,15 @@
 
 Upstream E2B changes are in `CHANGELOG-E2B.md`.
 
+## Unreleased
+
+- One `LICENSE` file: the MIT text with the upstream copyright line (FOUNDRYLABS, INC.) and
+  ContextFab's; `LICENSE-E2B` is merged into it.
+- README: "Under the hood" section (Firecracker, the E2B open-source infrastructure and SDK, and how
+  to use the E2B SDKs with BoxFab).
+- Releases 0.1.0a1 and 0.1.0a2 have no git tags in this repository; their code is at commits
+  `908b46d` and `3110a4c`.
+
 ## 0.1.0a2 (2026-11-03)
 
 - Default domain `boxfab.io` (was `sandd.contextfab.io`, which keeps working until it is retired);
