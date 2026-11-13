@@ -136,7 +136,7 @@ Releases: see [RELEASING.md](RELEASING.md).
 
 ## License
 
-MIT. Parts of this SDK are derived from open-source software; see [LICENSE](LICENSE) and
-[UPSTREAM.md](UPSTREAM.md).
+MIT. Derived from the open-source [E2B Python SDK](https://github.com/e2b-dev/E2B) (MIT); see
+[LICENSE](LICENSE) and [UPSTREAM.md](UPSTREAM.md).
 
 BoxFab is a product of ContextFab, Inc.

@@ -8,8 +8,8 @@ Upstream E2B changes are in `CHANGELOG-E2B.md`.
   the missing-key message points to `https://dashboard.boxfab.io`.
 - Docstrings and comments name BoxFab instead of E2B; documentation links point to
   `https://boxfab.dev/docs`.
-- README and package metadata: shorter, BoxFab-focused; attribution in the License section,
-  `LICENSE` and `UPSTREAM.md`.
+- README and package metadata shortened; the upstream credit (E2B Python SDK, MIT) is in the
+  README's License section, `LICENSE` and `UPSTREAM.md`.
 
 ## 0.1.0a1 (2026-11-01)
 
