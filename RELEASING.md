@@ -18,7 +18,7 @@ anywhere: the upload uses PyPI Trusted Publishing (OIDC).
 | those exact files are uploaded; only this job has `id-token: write` | `publish.yml` job `publish` |
 | deploys only from `v*` tags | environment `pypi` |
 | a required reviewer approves each publication; admins cannot bypass it | environment `pypi` |
-| one publication at a time, never cancelled | `concurrency: pypi-publish` |
+| one publication at a time, never cancelled; a run for the other package's tag never waits | job `publish`: `concurrency: pypi-publish` |
 | actions pinned to commit SHAs; only GitHub-owned, `astral-sh/setup-uv`, `pypa/gh-action-pypi-publish` allowed | workflow files + repository Actions settings |
 
 Two human steps are needed for every upload: publishing the GitHub Release, and approving the

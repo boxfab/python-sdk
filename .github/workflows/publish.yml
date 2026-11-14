@@ -15,11 +15,6 @@ on:
 
 permissions: {}
 
-# One publication at a time across all releases; a running upload is never cancelled.
-concurrency:
-  group: pypi-publish
-  cancel-in-progress: false
-
 jobs:
   verify:
     # Releases of the desktop package (desktop-v* tags) go through publish-desktop.yml.
@@ -57,6 +52,11 @@ jobs:
 
   publish:
     needs: ci
+    # One upload at a time across both publish workflows, never cancelled. Set on this job only, so
+    # a run that skips (a tag for the other package) never waits in the queue.
+    concurrency:
+      group: pypi-publish
+      cancel-in-progress: false
     runs-on: ubuntu-latest
     timeout-minutes: 10
     environment:
