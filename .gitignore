@@ -8,3 +8,7 @@ build/
 .ruff_cache/
 .env
 *.env
+
+# Notes for AI agents and reviewers, kept locally
+AGENTS.md
+CLAUDE.md
