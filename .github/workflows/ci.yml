@@ -51,8 +51,52 @@ jobs:
             if python scripts/check_release_tag.py "$bad" 2>/dev/null; then echo "accepted bad tag $bad"; exit 1; fi
           done
 
+  desktop:
+    # The boxfab-desktop package in desktop/: offline tests, build, distribution checks, clean
+    # install. Its `desktop-dist` artifact is what publish-desktop.yml uploads.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - name: Unit tests (offline; no credentials in this workflow)
+        working-directory: desktop
+        run: |
+          uv sync --locked
+          uv run pytest tests/test_client.py tests/test_readiness.py -p no:cacheprovider
+      - name: Release tag check
+        run: |
+          v=$(python -c "import tomllib;print(tomllib.load(open('desktop/pyproject.toml','rb'))['project']['version'])")
+          python scripts/check_release_tag.py --project desktop "desktop-v$v"
+          for bad in "v$v" "desktop-$v" "desktop-v$v-x"; do
+            if python scripts/check_release_tag.py --project desktop "$bad" 2>/dev/null; then echo "accepted bad tag $bad"; exit 1; fi
+          done
+      - name: Build
+        working-directory: desktop
+        run: uv build && uvx twine check --strict dist/*
+      - name: Distribution contents, metadata, licenses, secrets
+        env:
+          DIST_EXTRA_DENY: ${{ secrets.DIST_EXTRA_DENY }}
+        run: python scripts/check_dist.py --project desktop desktop/dist
+      - name: Install the wheel in a clean environment (core SDK from PyPI)
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install desktop/dist/*.whl
+          cd /tmp && /tmp/clean/bin/python -c "import boxfab_desktop, importlib.metadata as m; from boxfab_desktop import Sandbox, BoxFab; print(m.version('boxfab-desktop'), m.version('boxfab'), boxfab_desktop.__file__)"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: desktop-dist
+          path: desktop/dist/
+          if-no-files-found: error
+          retention-days: 90
+
   generated-code-is-in-sync:
-    # boxfab/ and tests/ must be exactly what scripts/sync_upstream.py produces from the pin.
+    # boxfab/, tests/ and desktop/ must be exactly what scripts/sync_upstream.py produces.
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

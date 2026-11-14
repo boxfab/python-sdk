@@ -1,0 +1,50 @@
+[project]
+name = "boxfab-desktop"
+version = "0.1.0a1"
+description = "BoxFab Desktop: a virtual Linux desktop in a BoxFab sandbox, for computer-use agents"
+authors = [{ name = "ContextFab, Inc." }]
+license = "MIT"
+license-files = ["LICENSE"]
+readme = "README.md"
+requires-python = ">=3.11"
+classifiers = [
+    "Development Status :: 3 - Alpha",
+    "Intended Audience :: Developers",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+]
+# The core SDK in this repository is generated from the same upstream commit. The other ranges
+# are upstream's (e2b-desktop 2.7.2).
+dependencies = [
+    "boxfab>=0.1.0a3,<0.2",
+    "requests>=2.32.3,<3",
+    "urllib3>=2.8.0,<3",
+    "pillow>=13.0.0,<14",
+]
+
+[project.urls]
+Repository = "https://github.com/boxfab/python-sdk"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.0.3,<10",
+    "python-dotenv>=1.0.0,<2",
+    "pytest-dotenv>=0.5.2,<0.6",
+    "pytest-xdist>=3.6.1,<4",
+]
+
+# Development uses the core SDK from this repository; the published package depends on the
+# released `boxfab` (range above).
+[tool.uv.sources]
+boxfab = { path = "..", editable = true }
+
+[build-system]
+requires = ["uv_build>=0.13.4,<0.14.0"]
+build-backend = "uv_build"
+
+[tool.uv.build-backend]
+module-name = ["boxfab_desktop"]
+module-root = ""
+source-exclude = ["tests"]

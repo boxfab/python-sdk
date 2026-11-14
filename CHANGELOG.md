@@ -4,6 +4,9 @@ Upstream E2B changes are in `CHANGELOG-E2B.md`.
 
 ## Unreleased
 
+- New package `boxfab-desktop` in `desktop/` (virtual Linux desktop for computer-use agents),
+  generated in the same sync run as `boxfab`; released separately with `desktop-v*` tags through
+  `publish-desktop.yml`. CI job `desktop`; live tests job `live-desktop`.
 - README: the "Using the E2B SDKs and CLI" paragraph lists the E2B versions tested against
   BoxFab (Python, JavaScript, CLI) and notes that `e2b auth login` signs in to E2B's service.
 
