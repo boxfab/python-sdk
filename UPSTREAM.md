@@ -75,6 +75,30 @@ listed so users can work around them; they will be fixed upstream or by an expli
 The desktop sandbox template itself is in [boxfab/desktop](https://github.com/boxfab/desktop)
 (generated from `e2b-dev/desktop`).
 
+## Code interpreter package (`code-interpreter/`, `boxfab-code-interpreter`)
+
+Generated in the same sync run, from the same monorepo commit, by `scripts/sync_code_interpreter.py`:
+`packages/code-interpreter-python` (`e2b-code-interpreter` 2.11.6 at that commit) →
+`code-interpreter/boxfab_code_interpreter`, `code-interpreter/tests`, `code-interpreter/pytest.ini`,
+`code-interpreter/CHANGELOG-E2B.md`, and `code-interpreter/README.md` (our introduction and footer
+from `overlay/code-interpreter/`, upstream's README sections 3 and 4 in between).
+`code-interpreter/pyproject.toml` and `code-interpreter/CHANGELOG.md` are this repository's own;
+`code-interpreter/LICENSE` is a copy of `LICENSE`.
+
+| Change | Why |
+|---|---|
+| package `e2b_code_interpreter` → `boxfab_code_interpreter`, imports of `e2b` → `boxfab` | distribution and import name |
+| `E2B_*` variables read by the package and its tests (including `E2B_TESTS_TEMPLATE`) → `BOXFAB_*` | as in the core SDK |
+| client class `E2B` → `BoxFab` (`E2B` kept as an alias) | as in the core SDK |
+| product name and docs link in the `Sandbox` docstrings | the SDK's documentation names BoxFab and its docs |
+
+Deliberately unchanged: the default template `code-interpreter-v1` (BoxFab provides it), the
+Jupyter port `49999`, and the `E2b-Sandbox-Port` / `E2B-Traffic-Access-Token` request headers
+(wire protocol).
+
+Verified against BoxFab (2026-11-13): upstream's tests, renamed, 83/83 passed against
+`code-interpreter-v1`; Python, JavaScript, TypeScript, R, Java and Bash run.
+
 ## Verification (2026-11-01)
 
 The deployment runs the open-source E2B runtime with server-side patches only (worker discovery,

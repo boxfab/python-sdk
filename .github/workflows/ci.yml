@@ -95,8 +95,53 @@ jobs:
           if-no-files-found: error
           retention-days: 90
 
+  code-interpreter:
+    # The boxfab-code-interpreter package in code-interpreter/: offline tests, build, distribution checks, clean
+    # install. Its `code-interpreter-dist` artifact is what
+    # publish-code-interpreter.yml uploads.
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - name: Unit tests (offline; no credentials in this workflow)
+        working-directory: code-interpreter
+        run: |
+          uv sync --locked
+          uv run pytest tests/test_format_exception.py tests/test_execute_timeout.py tests/test_sandbox_url.py tests/charts/test_deserialize.py -p no:cacheprovider -n 0
+      - name: Release tag check
+        run: |
+          v=$(python -c "import tomllib;print(tomllib.load(open('code-interpreter/pyproject.toml','rb'))['project']['version'])")
+          python scripts/check_release_tag.py --project code-interpreter "code-interpreter-v$v"
+          for bad in "v$v" "code-interpreter-$v" "code-interpreter-v$v-x"; do
+            if python scripts/check_release_tag.py --project code-interpreter "$bad" 2>/dev/null; then echo "accepted bad tag $bad"; exit 1; fi
+          done
+      - name: Build
+        working-directory: code-interpreter
+        run: uv build && uvx twine check --strict dist/*
+      - name: Distribution contents, metadata, licenses, secrets
+        env:
+          DIST_EXTRA_DENY: ${{ secrets.DIST_EXTRA_DENY }}
+        run: python scripts/check_dist.py --project code-interpreter code-interpreter/dist
+      - name: Install the wheel in a clean environment (core SDK from PyPI)
+        run: |
+          python -m venv /tmp/clean
+          /tmp/clean/bin/pip install code-interpreter/dist/*.whl
+          cd /tmp && /tmp/clean/bin/python -c "import boxfab_code_interpreter as ci, importlib.metadata as m; from boxfab_code_interpreter import Sandbox, BoxFab; print(m.version('boxfab-code-interpreter'), m.version('boxfab'), ci.__file__)"
+      - uses: actions/upload-artifact@cf430e030ddbb5b0abf93d22962f4752f3646cd9 # v7.0.2
+        with:
+          name: code-interpreter-dist
+          path: code-interpreter/dist/
+          if-no-files-found: error
+          retention-days: 90
+
   generated-code-is-in-sync:
-    # boxfab/, tests/ and desktop/ must be exactly what scripts/sync_upstream.py produces.
+    # boxfab/, tests/, desktop/ and code-interpreter/ must be exactly what scripts/sync_upstream.py produces.
     runs-on: ubuntu-latest
     timeout-minutes: 10
     steps:

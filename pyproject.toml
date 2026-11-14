@@ -53,4 +53,4 @@ build-backend = "uv_build"
 [tool.uv.build-backend]
 module-name = ["boxfab"]
 module-root = ""
-source-exclude = ["tests", "integration", "scripts", "examples", ".github", "desktop", "overlay"]
+source-exclude = ["tests", "integration", "scripts", "examples", ".github", "desktop", "code-interpreter", "overlay"]

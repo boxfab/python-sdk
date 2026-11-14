@@ -118,9 +118,20 @@ parameters directly.
   concurrency. Other upstream features (template builds, volumes, secrets, MCP, IAM tokens,
   network rules, git helpers, PTY, filesystem watch) are included but not yet verified on
   BoxFab; volumes, secrets and MCP depend on services the deployment may not run.
-- An add-on package for code interpreting is not available for `boxfab` yet; the
-  `code-interpreter-v1` template can be used with `Sandbox.create()`. For desktop sandboxes,
-  see `boxfab-desktop` below.
+- For code interpreting and desktop sandboxes, see `boxfab-code-interpreter` and `boxfab-desktop`
+  below.
+
+## Code interpreting
+
+`boxfab-code-interpreter` (in [code-interpreter/](code-interpreter)) runs AI-generated code in a
+Jupyter-style sandbox: Python, JavaScript, TypeScript, R, Java and Bash, with text, tables and
+charts returned as data.
+
+```bash
+pip install boxfab-code-interpreter
+```
+
+See [code-interpreter/README.md](code-interpreter/README.md).
 
 ## Desktop sandboxes
 
@@ -142,9 +153,9 @@ SDK=boxfab BOXFAB_API_KEY=... uv run pytest integration   # live tests, create a
 uv build
 ```
 
-`boxfab/`, `tests/` and `desktop/` (except its `pyproject.toml` and `CHANGELOG.md`) are generated
-from upstream by `scripts/sync_upstream.py`; change the rules there, not the generated files. See [UPSTREAM.md](UPSTREAM.md).
-Releases: see [RELEASING.md](RELEASING.md).
+`boxfab/`, `tests/`, `desktop/` and `code-interpreter/` (except their `pyproject.toml` and
+`CHANGELOG.md`) are generated from upstream by `scripts/sync_upstream.py`; change the rules there,
+not the generated files. See [UPSTREAM.md](UPSTREAM.md). Releases: see [RELEASING.md](RELEASING.md).
 
 ## Under the hood
 

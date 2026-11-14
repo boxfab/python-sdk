@@ -17,7 +17,7 @@ permissions: {}
 
 jobs:
   verify:
-    # Releases of the core package (v* tags) go through publish.yml.
+    # Releases of the other packages (v*, code-interpreter-v* tags) go through their own workflows.
     if: startsWith(github.event.release.tag_name, 'desktop-v')
     runs-on: ubuntu-latest
     timeout-minutes: 5

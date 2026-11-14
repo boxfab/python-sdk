@@ -79,6 +79,14 @@ CI on the tagged commit; the `pypi` environment's approval; trusted publishing.
   (PR, green CI, squash-merge), then publish a GitHub Release with tag `desktop-v<version>`
   (pre-release for a/b/rc), and approve the `pypi` deployment.
 
+## Releasing boxfab-code-interpreter
+
+The same as boxfab-desktop, with tags `code-interpreter-v<version>`, the version in
+`code-interpreter/pyproject.toml`, the changelog `code-interpreter/CHANGELOG.md` and the workflow
+`.github/workflows/publish-code-interpreter.yml`. One-time setup: a PyPI pending publisher with
+project name `boxfab-code-interpreter`, owner `boxfab`, repository `python-sdk`, workflow
+`publish-code-interpreter.yml`, environment `pypi`.
+
 ## If it fails
 
 - `verify` failed: the tag does not match the version or the commit is not on `main`. Nothing
