@@ -2,6 +2,11 @@
 
 Upstream E2B Desktop SDK changes are in `CHANGELOG-E2B.md`.
 
+## Unreleased
+
+- README "Under the hood": using the E2B Desktop SDKs with BoxFab (`E2B_DOMAIN` and `E2B_API_KEY`),
+  tested with `e2b-desktop` 2.7.2 (Python) and `@e2b/desktop` 2.5.0 (JavaScript).
+
 ## 0.1.0a1 (unreleased)
 
 - First alpha, generated from the E2B Desktop SDK `e2b-desktop` 2.7.2 (E2B monorepo commit
