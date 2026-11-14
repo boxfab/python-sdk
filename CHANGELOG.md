@@ -4,6 +4,10 @@ Upstream E2B changes are in `CHANGELOG-E2B.md`.
 
 ## Unreleased
 
+- New package `boxfab-code-interpreter` in `code-interpreter/` (Jupyter-style code execution),
+  generated in the same sync run as `boxfab`; released separately with `code-interpreter-v*` tags
+  through `publish-code-interpreter.yml`. CI job `code-interpreter`; live tests job
+  `live-code-interpreter`.
 - New package `boxfab-desktop` in `desktop/` (virtual Linux desktop for computer-use agents),
   generated in the same sync run as `boxfab`; released separately with `desktop-v*` tags through
   `publish-desktop.yml`. CI job `desktop`; live tests job `live-desktop`.

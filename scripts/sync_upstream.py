@@ -30,6 +30,7 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT / "scripts"))
 from sync_desktop import sync as sync_desktop  # noqa: E402
+from sync_code_interpreter import sync as sync_code_interpreter  # noqa: E402
 
 UPSTREAM_REPO = "https://github.com/e2b-dev/E2B.git"
 SDK_SUBDIR = "packages/python-sdk"
@@ -299,6 +300,9 @@ def main():
             sys.exit("LICENSE permission text differs from upstream's")
         shutil.copy2(sdk / "CHANGELOG.md", ROOT / "CHANGELOG-E2B.md")
         sync_desktop(src)  # desktop/ from the same checkout (scripts/sync_desktop.py)
+        sync_code_interpreter(
+            src
+        )  # code-interpreter/ (scripts/sync_code_interpreter.py)
 
     mods = module_names(ROOT / "boxfab")
     for p in (
