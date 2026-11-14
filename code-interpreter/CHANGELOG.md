@@ -2,7 +2,7 @@
 
 Upstream E2B Code Interpreter SDK changes are in `CHANGELOG-E2B.md`.
 
-## 0.1.0a1 (unreleased)
+## 0.1.0a1 (2026-11-13)
 
 - First alpha, generated from the E2B Code Interpreter SDK `e2b-code-interpreter` 2.11.6 (E2B
   monorepo commit `3a904178b2f1`, the commit the core `boxfab` package is generated from).
