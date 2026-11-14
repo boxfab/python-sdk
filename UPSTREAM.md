@@ -60,6 +60,18 @@ is a copy of `LICENSE`.
 | client class `E2B` → `BoxFab` (`E2B` kept as an alias) | as in the core SDK |
 | live tests take the template from `BOXFAB_DESKTOP_TEMPLATE` (default: the SDK's `desktop`) | test a template build before it becomes the default |
 
+### Known upstream issues (not changed here)
+
+The generated code keeps upstream's behaviour, including these issues found in review. They are
+listed so users can work around them; they will be fixed upstream or by an explicit sync rule.
+
+- **Zero coordinates in clicks** (`left_click`, `double_click`, `right_click`, `middle_click`): the
+  mouse is moved only `if x and y`, so a coordinate of `0` (a screen edge) clicks at the previous
+  cursor position. Work-around: call `move_mouse(x, y)` first, then the click without coordinates.
+- **`.stream` after `Sandbox.connect()`**: the stream helper is set up only in `Sandbox.create()`,
+  so `Sandbox.connect(sandbox_id).stream` raises `AttributeError`. Work-around: start and use the
+  stream from the process that created the sandbox.
+
 The desktop sandbox template itself is in [boxfab/desktop](https://github.com/boxfab/desktop)
 (generated from `e2b-dev/desktop`).
 
