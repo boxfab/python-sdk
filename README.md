@@ -118,8 +118,20 @@ parameters directly.
   concurrency. Other upstream features (template builds, volumes, secrets, MCP, IAM tokens,
   network rules, git helpers, PTY, filesystem watch) are included but not yet verified on
   BoxFab; volumes, secrets and MCP depend on services the deployment may not run.
-- Add-on packages for code interpreting and desktop sandboxes are not available for `boxfab`
-  yet; the `code-interpreter-v1` and `desktop` templates can be used with `Sandbox.create()`.
+- An add-on package for code interpreting is not available for `boxfab` yet; the
+  `code-interpreter-v1` template can be used with `Sandbox.create()`. For desktop sandboxes,
+  see `boxfab-desktop` below.
+
+## Desktop sandboxes
+
+`boxfab-desktop` (in [desktop/](desktop)) adds a virtual Linux desktop for computer-use agents:
+mouse and keyboard control, screenshots, application windows, and a live stream of the screen.
+
+```bash
+pip install boxfab-desktop
+```
+
+See [desktop/README.md](desktop/README.md).
 
 ## Development
 
@@ -130,8 +142,8 @@ SDK=boxfab BOXFAB_API_KEY=... uv run pytest integration   # live tests, create a
 uv build
 ```
 
-`boxfab/` and `tests/` are generated from upstream by `scripts/sync_upstream.py`; change the
-rules there, not the generated files. See [UPSTREAM.md](UPSTREAM.md).
+`boxfab/`, `tests/` and `desktop/` (except its `pyproject.toml` and `CHANGELOG.md`) are generated
+from upstream by `scripts/sync_upstream.py`; change the rules there, not the generated files. See [UPSTREAM.md](UPSTREAM.md).
 Releases: see [RELEASING.md](RELEASING.md).
 
 ## Under the hood

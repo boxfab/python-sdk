@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Check that a release tag is `v<version>` for the version in pyproject.toml.
 
-    python scripts/check_release_tag.py v0.1.0a1
+    python scripts/check_release_tag.py v0.1.0a1                            # boxfab
+    python scripts/check_release_tag.py --project desktop desktop-v0.1.0a1  # boxfab-desktop
 
 Accepts PEP 440 public versions in canonical form, including pre-releases (a/b/rc), post and
 dev releases, e.g. v0.1.0a1, v1.2.3, v1.2.3rc2. Exits non-zero with a reason otherwise.
@@ -19,28 +20,34 @@ VERSION_RE = re.compile(
 )
 
 
-def check(tag: str, version: str) -> str | None:
+def check(tag: str, version: str, prefix: str = "v") -> str | None:
     if not VERSION_RE.fullmatch(version):
         return (
             f"pyproject version {version!r} is not a canonical PEP 440 public version"
         )
-    if not tag.startswith("v"):
-        return f"tag {tag!r} must start with 'v'"
-    if tag[1:] != version:
-        return f"tag {tag!r} does not match pyproject version {version!r} (expected 'v{version}')"
+    if not tag.startswith(prefix):
+        return f"tag {tag!r} must start with {prefix!r}"
+    if tag[len(prefix) :] != version:
+        return f"tag {tag!r} does not match pyproject version {version!r} (expected '{prefix}{version}')"
     return None
 
 
 def main() -> int:
-    if len(sys.argv) != 2:
+    args = sys.argv[1:]
+    project_dir, prefix = ROOT, "v"
+    if args[:1] == ["--project"] and len(args) == 3:
+        project_dir, prefix, args = ROOT / args[1], f"{args[1]}-v", args[2:]
+    if len(args) != 1:
         print(__doc__, file=sys.stderr)
         return 2
-    version = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]["version"]
-    err = check(sys.argv[1], version)
+    version = tomllib.loads((project_dir / "pyproject.toml").read_text())["project"][
+        "version"
+    ]
+    err = check(args[0], version, prefix)
     if err:
         print(f"release tag check failed: {err}", file=sys.stderr)
         return 1
-    print(f"release tag {sys.argv[1]} matches version {version}")
+    print(f"release tag {args[0]} matches version {version}")
     return 0
 
 

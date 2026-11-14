@@ -66,6 +66,19 @@ Two human steps are needed for every upload: publishing the GitHub Release, and 
    https://pypi.org/project/boxfab/ and, in a clean venv, `pip install boxfab==<version>` and
    `python examples/hello_sandbox.py` with `BOXFAB_API_KEY` set.
 
+## Releasing boxfab-desktop
+
+The desktop package (`desktop/`) has its own version and its own workflow,
+`.github/workflows/publish-desktop.yml`, which acts only on tags `desktop-v<version>`
+(`publish.yml` acts only on `v<version>`). The same protections apply: admin-only, immutable tags;
+CI on the tagged commit; the `pypi` environment's approval; trusted publishing.
+
+- One-time setup: a PyPI pending publisher with project name `boxfab-desktop`, owner `boxfab`,
+  repository `python-sdk`, workflow `publish-desktop.yml`, environment `pypi`.
+- Release: set `version` in `desktop/pyproject.toml` and add the `desktop/CHANGELOG.md` entry
+  (PR, green CI, squash-merge), then publish a GitHub Release with tag `desktop-v<version>`
+  (pre-release for a/b/rc), and approve the `pypi` deployment.
+
 ## If it fails
 
 - `verify` failed: the tag does not match the version or the commit is not on `main`. Nothing

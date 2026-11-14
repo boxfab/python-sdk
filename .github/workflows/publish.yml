@@ -22,6 +22,8 @@ concurrency:
 
 jobs:
   verify:
+    # Releases of the desktop package (desktop-v* tags) go through publish-desktop.yml.
+    if: startsWith(github.event.release.tag_name, 'v')
     runs-on: ubuntu-latest
     timeout-minutes: 5
     permissions:

@@ -44,6 +44,37 @@ Deliberately unchanged:
 - The dependency `e2b-dockerfile-utils` (Apache-2.0, published on PyPI by E2B) is used as is,
   not vendored or renamed.
 
+## Desktop package (`desktop/`, `boxfab-desktop`)
+
+Generated in the same sync run, from the same monorepo commit, by `scripts/sync_desktop.py`:
+`packages/desktop-python` (`e2b-desktop` 2.7.2 at that commit) → `desktop/boxfab_desktop`,
+`desktop/tests`, `desktop/pytest.ini`, `desktop/CHANGELOG-E2B.md`, and `desktop/README.md` (our
+introduction from `overlay/desktop/`, then upstream's README from "3. Create Desktop Sandbox" on).
+`desktop/pyproject.toml` and `desktop/CHANGELOG.md` are this repository's own; `desktop/LICENSE`
+is a copy of `LICENSE`.
+
+| Change | Why |
+|---|---|
+| package `e2b_desktop` → `boxfab_desktop`, imports of `e2b` → `boxfab` | distribution and import name |
+| `E2B_*` variables read by the package and its tests → `BOXFAB_*` | as in the core SDK |
+| client class `E2B` → `BoxFab` (`E2B` kept as an alias) | as in the core SDK |
+| live tests take the template from `BOXFAB_DESKTOP_TEMPLATE` (default: the SDK's `desktop`) | test a template build before it becomes the default |
+
+### Known upstream issues (not changed here)
+
+The generated code keeps upstream's behaviour, including these issues found in review. They are
+listed so users can work around them; they will be fixed upstream or by an explicit sync rule.
+
+- **Zero coordinates in clicks** (`left_click`, `double_click`, `right_click`, `middle_click`): the
+  mouse is moved only `if x and y`, so a coordinate of `0` (a screen edge) clicks at the previous
+  cursor position. Work-around: call `move_mouse(x, y)` first, then the click without coordinates.
+- **`.stream` after `Sandbox.connect()`**: the stream helper is set up only in `Sandbox.create()`,
+  so `Sandbox.connect(sandbox_id).stream` raises `AttributeError`. Work-around: start and use the
+  stream from the process that created the sandbox.
+
+The desktop sandbox template itself is in [boxfab/desktop](https://github.com/boxfab/desktop)
+(generated from `e2b-dev/desktop`).
+
 ## Verification (2026-11-01)
 
 The deployment runs the open-source E2B runtime with server-side patches only (worker discovery,

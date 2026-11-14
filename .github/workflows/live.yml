@@ -83,3 +83,28 @@ jobs:
           /tmp/clean/bin/pip install "e2b==$E2B_SDK_VERSION" pytest pytest-asyncio pytest-timeout
           cp integration/test_live.py /tmp/ && cd /tmp
           /tmp/clean/bin/pytest -q -p no:cacheprovider -o asyncio_mode=auto test_live.py
+
+  # The desktop package's live tests against the `desktop` template (desktop/tests/test_controls.py).
+  live-desktop:
+    needs: live-e2b
+    runs-on: ubuntu-latest
+    environment: live
+    timeout-minutes: 20
+    steps:
+      - uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+        with:
+          persist-credentials: false
+      - uses: astral-sh/setup-uv@68559e99cc807c1eb7e9238fd43a15bba460eec2 # v10.3.3
+        with:
+          version: ${{ env.UV_VERSION }}
+          python-version: "3.12"
+      - name: Desktop live tests
+        working-directory: desktop
+        env:
+          BOXFAB_API_KEY: ${{ secrets.BOXFAB_API_KEY }}
+          BOXFAB_DOMAIN: ${{ inputs.domain }}
+        run: |
+          [ -n "$BOXFAB_API_KEY" ] || { echo "BOXFAB_API_KEY is not set in the live environment"; exit 1; }
+          [ -n "$BOXFAB_DOMAIN" ] || unset BOXFAB_DOMAIN
+          uv sync --locked
+          uv run pytest tests/test_controls.py -p no:cacheprovider

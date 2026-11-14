@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """Validate the built distributions before they can be published.
 
-    python scripts/check_dist.py dist/
+    python scripts/check_dist.py dist/                       # the boxfab package (repository root)
+    python scripts/check_dist.py --project desktop desktop/dist/   # boxfab-desktop
 
 Checks: exactly one wheel and one sdist named for the pyproject name and version; metadata
 name, version and license; the license file present; no files outside the expected layout;
@@ -20,7 +21,6 @@ from pathlib import Path
 ROOT = Path(__file__).resolve().parent.parent
 LICENSES = ("LICENSE",)
 SDIST_TOP = {
-    "boxfab",
     "LICENSE",
     "README.md",
     "pyproject.toml",
@@ -83,20 +83,27 @@ def check_metadata(raw: bytes, where: str, name: str, version: str, errors):
 
 
 def main() -> int:
-    dist = Path(sys.argv[1] if len(sys.argv) > 1 else "dist")
-    project = tomllib.loads((ROOT / "pyproject.toml").read_text())["project"]
-    name, version = project["name"], project["version"]
+    args = sys.argv[1:]
+    project_dir = ROOT
+    if args[:1] == ["--project"]:
+        project_dir, args = ROOT / args[1], args[2:]
+    dist = Path(args[0] if args else "dist")
+    pyproject = tomllib.loads((project_dir / "pyproject.toml").read_text())
+    name, version = pyproject["project"]["name"], pyproject["project"]["version"]
+    module = pyproject["tool"]["uv"]["build-backend"]["module-name"][0]
+    dist_name = name.replace("-", "_")  # distribution file and .dist-info names
+    sdist_top = SDIST_TOP | {module}
     errors = []
 
     files = sorted(p.name for p in dist.iterdir() if not p.name.startswith("."))
-    want = [f"{name}-{version}-py3-none-any.whl", f"{name}-{version}.tar.gz"]
+    want = [f"{dist_name}-{version}-py3-none-any.whl", f"{dist_name}-{version}.tar.gz"]
     if sorted(files) != sorted(want):
         fail([f"{dist}: expected exactly {want}, found {files}"])
 
     whl = zipfile.ZipFile(dist / want[0])
-    info = f"{name}-{version}.dist-info/"
+    info = f"{dist_name}-{version}.dist-info/"
     for n in whl.namelist():
-        if not (n.startswith(f"{name}/") or n.startswith(info)):
+        if not (n.startswith(f"{module}/") or n.startswith(info)):
             errors.append(f"wheel: unexpected file {n}")
         scan(f"wheel:{n}", whl.read(n), errors)
     for lic in LICENSES:
@@ -104,7 +111,7 @@ def main() -> int:
             errors.append(f"wheel: missing {info}licenses/{lic}")
     check_metadata(whl.read(f"{info}METADATA"), "wheel METADATA", name, version, errors)
 
-    prefix = f"{name}-{version}/"
+    prefix = f"{dist_name}-{version}/"
     with tarfile.open(dist / want[1]) as sd:
         members = [m for m in sd.getmembers() if m.isfile()]
         names = {m.name for m in members}
@@ -113,7 +120,7 @@ def main() -> int:
                 errors.append(f"sdist: file outside {prefix}: {m.name}")
                 continue
             top = m.name[len(prefix) :].split("/")[0]
-            if top not in SDIST_TOP:
+            if top not in sdist_top:
                 errors.append(f"sdist: unexpected file {m.name}")
             scan(f"sdist:{m.name}", sd.extractfile(m).read(), errors)
         for lic in LICENSES:
