@@ -18,8 +18,8 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "code-interpreter"
-DOMAIN = "boxfab.io"
-DOCS_URL = "https://boxfab.dev/docs"
+DOMAIN = "us-west.boxfab.dev"
+DOCS_URL = "https://boxfab.io/docs"
 
 # Environment variables read by the package and its tests (the core SDK reads the rest).
 ENV_VARS = ["API_KEY", "DOMAIN", "DEBUG", "API_URL", "SANDBOX_URL", "TESTS_TEMPLATE"]

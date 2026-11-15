@@ -1,7 +1,7 @@
 """
 Secure sandboxed cloud environments made for AI agents and AI apps.
 
-Check docs [here](https://boxfab.dev/docs).
+Check docs [here](https://boxfab.io/docs).
 
 BoxFab Sandbox is a secure cloud sandbox environment made for AI agents and AI
 apps.

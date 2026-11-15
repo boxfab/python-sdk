@@ -8,7 +8,7 @@ from the open-source E2B Desktop SDK;
 the E2B Desktop SDKs work with it as well. Set both variables, the domain first:
 
 ```bash
-export E2B_DOMAIN=boxfab.io
+export E2B_DOMAIN=us-west.boxfab.dev
 export E2B_API_KEY="<your BoxFab API key>"
 ```
 

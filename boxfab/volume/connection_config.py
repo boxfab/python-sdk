@@ -31,7 +31,7 @@ class VolumeApiParams(TypedDict, total=False):
     """
 
     domain: Optional[str]
-    """Domain to use for the volume API, defaults to `BOXFAB_DOMAIN` or `boxfab.io`."""
+    """Domain to use for the volume API, defaults to `BOXFAB_DOMAIN` or `us-west.boxfab.dev`."""
 
     debug: Optional[bool]
     """Whether to use debug mode, defaults to `BOXFAB_DEBUG` environment variable."""
@@ -69,7 +69,7 @@ class VolumeConnectionConfig:
 
     @staticmethod
     def _domain():
-        return os.getenv("BOXFAB_DOMAIN") or "boxfab.io"
+        return os.getenv("BOXFAB_DOMAIN") or "us-west.boxfab.dev"
 
     @staticmethod
     def _debug():

@@ -13,7 +13,7 @@ open-source E2B Code Interpreter SDK;
 variables, the domain first:
 
 ```bash
-export E2B_DOMAIN=boxfab.io
+export E2B_DOMAIN=us-west.boxfab.dev
 export E2B_API_KEY="<your BoxFab API key>"
 ```
 

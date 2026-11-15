@@ -46,7 +46,7 @@ class AsyncSandbox(BaseAsyncSandbox):
     - Run isolated code
     - Access the internet
 
-    Check docs [here](https://boxfab.dev/docs).
+    Check docs [here](https://boxfab.io/docs).
 
     Use the `AsyncSandbox.create()` to create a new sandbox.
 

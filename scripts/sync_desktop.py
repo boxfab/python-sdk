@@ -18,7 +18,7 @@ from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 OUT = ROOT / "desktop"
-DOMAIN = "boxfab.io"
+DOMAIN = "us-west.boxfab.dev"
 TEMPLATE_URL = "https://github.com/boxfab/desktop/tree/main/template"
 
 # Environment variables read by the desktop SDK and its tests (the core SDK reads the rest).

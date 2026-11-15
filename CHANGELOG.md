@@ -4,6 +4,11 @@ Upstream E2B changes are in `CHANGELOG-E2B.md`.
 
 ## Unreleased
 
+- Default domain `us-west.boxfab.dev`: BoxFab's first region. `boxfab.io` (the previous default)
+  does not serve the API, so 0.1.0a3 and older need `BOXFAB_DOMAIN=us-west.boxfab.dev`. Same in
+  `boxfab-desktop` and `boxfab-code-interpreter`.
+- Dashboard links point to `https://dashboard.us-west.boxfab.io`, docs links to
+  `https://boxfab.io/docs`.
 - New package `boxfab-code-interpreter` in `code-interpreter/` (Jupyter-style code execution),
   generated in the same sync run as `boxfab`; released separately with `code-interpreter-v*` tags
   through `publish-code-interpreter.yml`. CI job `code-interpreter`; live tests job
