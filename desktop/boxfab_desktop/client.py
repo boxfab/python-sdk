@@ -35,7 +35,7 @@ class BoxFab:
     ```python
     from boxfab_desktop import BoxFab
 
-    client = BoxFab(api_key="e2b_...", domain="boxfab.io")
+    client = BoxFab(api_key="e2b_...", domain="us-west.boxfab.dev")
 
     desktop = client.Sandbox.create()
     desktop.stream.start()

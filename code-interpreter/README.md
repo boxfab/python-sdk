@@ -14,7 +14,7 @@ pip install boxfab-code-interpreter
 
 ### 2. Get a BoxFab API key
 
-Get a key from the [BoxFab dashboard](https://dashboard.boxfab.io) and set it as `BOXFAB_API_KEY`.
+Get a key from the [BoxFab dashboard](https://dashboard.us-west.boxfab.io) and set it as `BOXFAB_API_KEY`.
 The SDK reads only `BOXFAB_*` variables.
 
 ### 3. Execute code with code interpreter inside Sandbox
@@ -35,7 +35,7 @@ The top-level `Sandbox` and `AsyncSandbox` exports read their configuration from
 ```py
 from boxfab_code_interpreter import BoxFab
 
-client = BoxFab(api_key="e2b_***", domain="boxfab.io")
+client = BoxFab(api_key="e2b_***", domain="us-west.boxfab.dev")
 
 with client.Sandbox.create() as sandbox:
     execution = sandbox.run_code("x = 1; x += 1; x")
@@ -69,7 +69,7 @@ open-source E2B Code Interpreter SDK;
 variables, the domain first:
 
 ```bash
-export E2B_DOMAIN=boxfab.io
+export E2B_DOMAIN=us-west.boxfab.dev
 export E2B_API_KEY="<your BoxFab API key>"
 ```
 

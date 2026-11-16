@@ -36,7 +36,7 @@ class BoxFab:
     ```python
     from boxfab_code_interpreter import BoxFab
 
-    client = BoxFab(api_key="e2b_...", domain="boxfab.io")
+    client = BoxFab(api_key="e2b_...", domain="us-west.boxfab.dev")
 
     sandbox = client.Sandbox.create()
     execution = sandbox.run_code("x = 1; x += 1; x")

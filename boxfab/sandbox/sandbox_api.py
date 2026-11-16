@@ -493,7 +493,7 @@ class SandboxNetworkOpts(TypedDict):
     mask_request_host: NotRequired[str]
     """
     Allows specifying a custom host mask for all sandbox requests.
-    Supports ${PORT} variable. Defaults to "${PORT}-sandboxid.boxfab.io".
+    Supports ${PORT} variable. Defaults to "${PORT}-sandboxid.us-west.boxfab.dev".
 
     Examples:
     - Custom subdomain: `"${PORT}-myapp.example.com"`

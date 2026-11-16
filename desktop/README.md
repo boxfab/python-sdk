@@ -8,7 +8,7 @@ browser.
 
 ### 1. Get a BoxFab API key
 
-Get a key from the [BoxFab dashboard](https://dashboard.boxfab.io) and set it as
+Get a key from the [BoxFab dashboard](https://dashboard.us-west.boxfab.io) and set it as
 `BOXFAB_API_KEY`. The SDK reads only `BOXFAB_*` variables.
 
 ### 2. Install the SDK
@@ -62,7 +62,7 @@ The top-level `Sandbox` export reads its configuration from the environment vari
 ```python
 from boxfab_desktop import BoxFab
 
-client = BoxFab(api_key="e2b_***", domain="boxfab.io")
+client = BoxFab(api_key="e2b_***", domain="us-west.boxfab.dev")
 
 desktop = client.Sandbox.create()
 desktop.stream.start()
@@ -266,7 +266,7 @@ from the open-source E2B Desktop SDK;
 the E2B Desktop SDKs work with it as well. Set both variables, the domain first:
 
 ```bash
-export E2B_DOMAIN=boxfab.io
+export E2B_DOMAIN=us-west.boxfab.dev
 export E2B_API_KEY="<your BoxFab API key>"
 ```
 

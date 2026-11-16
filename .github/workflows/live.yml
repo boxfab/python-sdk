@@ -74,7 +74,7 @@ jobs:
           SDK: e2b
           E2B_API_KEY: ${{ secrets.BOXFAB_API_KEY }}
           # Never empty: without a domain the E2B SDK would send the key to E2B's own service.
-          E2B_DOMAIN: ${{ inputs.domain || 'boxfab.io' }}
+          E2B_DOMAIN: ${{ inputs.domain || 'us-west.boxfab.dev' }}
           LIVE_MAX_CONCURRENT: "5"
         run: |
           [ -n "$E2B_API_KEY" ] || { echo "BOXFAB_API_KEY is not set in the live environment"; exit 1; }

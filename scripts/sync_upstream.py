@@ -35,9 +35,9 @@ from sync_code_interpreter import sync as sync_code_interpreter  # noqa: E402
 UPSTREAM_REPO = "https://github.com/e2b-dev/E2B.git"
 SDK_SUBDIR = "packages/python-sdk"
 
-DEFAULT_DOMAIN = "boxfab.io"
-DASHBOARD_URL = "https://dashboard.boxfab.io"
-DOCS_URL = "https://boxfab.dev/docs"
+DEFAULT_DOMAIN = "us-west.boxfab.dev"
+DASHBOARD_URL = "https://dashboard.us-west.boxfab.io"
+DOCS_URL = "https://boxfab.io/docs"
 
 # Environment variables the SDK reads. Renamed everywhere (code, docstrings, tests).
 ENV_VARS = [

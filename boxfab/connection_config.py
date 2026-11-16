@@ -220,7 +220,7 @@ class ConnectionConfig:
 
     @staticmethod
     def _domain():
-        return os.getenv("BOXFAB_DOMAIN") or "boxfab.io"
+        return os.getenv("BOXFAB_DOMAIN") or "us-west.boxfab.dev"
 
     @staticmethod
     def _debug():

@@ -1,6 +1,6 @@
 # BoxFab Python SDK
 
-Python SDK for [BoxFab](https://boxfab.dev), an agent execution cloud: start isolated
+Python SDK for [BoxFab](https://boxfab.io), an agent execution cloud: start isolated
 Firecracker sandboxes, run commands, move files, and reach services running inside them.
 
 > **Alpha.** The API may still change between releases.
@@ -15,7 +15,7 @@ pip install boxfab
 
 ## Authenticate
 
-Get an API key from the [BoxFab dashboard](https://dashboard.boxfab.io) or your BoxFab
+Get an API key from the [BoxFab dashboard](https://dashboard.us-west.boxfab.io) or your BoxFab
 administrator and export it:
 
 ```bash
@@ -94,7 +94,7 @@ asyncio.run(main())
 ```python
 from boxfab import BoxFab
 
-client = BoxFab(api_key="e2b_...", domain="boxfab.io")
+client = BoxFab(api_key="e2b_...", domain="us-west.boxfab.dev")
 sandbox = client.Sandbox.create()
 ```
 
@@ -103,7 +103,7 @@ sandbox = client.Sandbox.create()
 | Variable | Default | Meaning |
 |---|---|---|
 | `BOXFAB_API_KEY` | none | API key |
-| `BOXFAB_DOMAIN` | `boxfab.io` | BoxFab domain; the API is `https://api.<domain>`, sandbox ports are `https://<port>-<id>.<domain>` |
+| `BOXFAB_DOMAIN` | `us-west.boxfab.dev` | BoxFab domain; the API is `https://api.<domain>`, sandbox ports are `https://<port>-<id>.<domain>` |
 | `BOXFAB_DEBUG` | `false` | plain HTTP to a local development stack |
 | `BOXFAB_HTTP_VERSION`, `BOXFAB_CONNECTION_RETRIES`, `BOXFAB_MAX_CONNECTIONS`, `BOXFAB_MAX_KEEPALIVE_CONNECTIONS`, `BOXFAB_KEEPALIVE_EXPIRY` | as upstream | transport tuning |
 
@@ -167,7 +167,7 @@ the open-source E2B Python SDK; [UPSTREAM.md](UPSTREAM.md) lists every change.
 as well. Set both variables, the domain first:
 
 ```bash
-export E2B_DOMAIN=boxfab.io
+export E2B_DOMAIN=us-west.boxfab.dev
 export E2B_API_KEY="<your BoxFab API key>"
 ```
 

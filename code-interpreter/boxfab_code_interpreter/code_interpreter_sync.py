@@ -42,7 +42,7 @@ class Sandbox(BaseSandbox):
     - Run isolated code
     - Access the internet
 
-    Check docs [here](https://boxfab.dev/docs).
+    Check docs [here](https://boxfab.io/docs).
 
     Use the `Sandbox.create()` to create a new sandbox.
 

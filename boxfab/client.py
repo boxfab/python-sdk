@@ -43,7 +43,7 @@ class BoxFab:
     ```python
     from boxfab import BoxFab
 
-    client = BoxFab(api_key="e2b_...", domain="boxfab.io")
+    client = BoxFab(api_key="e2b_...", domain="us-west.boxfab.dev")
 
     sandbox = client.Sandbox.create()
     volumes = client.Volume.list()
