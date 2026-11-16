@@ -2,12 +2,16 @@
 
 Upstream E2B Desktop SDK changes are in `CHANGELOG-E2B.md`.
 
-## Unreleased
+## 0.1.0a2 (2026-11-16)
 
+- Default domain `us-west.boxfab.dev`, BoxFab's first region, through `boxfab` 0.1.0a4 (the core
+  package sets it); the previous default `boxfab.io` does not serve the API. The README, the doc
+  examples and the `E2B_DOMAIN` instructions use `us-west.boxfab.dev`.
+- Dashboard links point to `https://dashboard.us-west.boxfab.io`, docs links to `https://boxfab.io/docs`.
 - README "Under the hood": using the E2B Desktop SDKs with BoxFab (`E2B_DOMAIN` and `E2B_API_KEY`),
   tested with `e2b-desktop` 2.7.2 (Python) and `@e2b/desktop` 2.5.0 (JavaScript).
 
-## 0.1.0a1 (unreleased)
+## 0.1.0a1 (2026-11-14)
 
 - First alpha, generated from the E2B Desktop SDK `e2b-desktop` 2.7.2 (E2B monorepo commit
   `3a904178b2f1`, the commit the core `boxfab` package is generated from).

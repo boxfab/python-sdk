@@ -1,6 +1,6 @@
 [project]
 name = "boxfab-code-interpreter"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "BoxFab Code Interpreter: run AI-generated code in BoxFab sandboxes, Jupyter-style"
 authors = [{ name = "ContextFab, Inc." }]
 license = "MIT"

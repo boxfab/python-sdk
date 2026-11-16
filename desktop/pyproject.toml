@@ -1,6 +1,6 @@
 [project]
 name = "boxfab-desktop"
-version = "0.1.0a1"
+version = "0.1.0a2"
 description = "BoxFab Desktop: a virtual Linux desktop in a BoxFab sandbox, for computer-use agents"
 authors = [{ name = "ContextFab, Inc." }]
 license = "MIT"
